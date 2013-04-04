@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="javacalculus/CalcExpression.java" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/applet-launcher.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/gluegen-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/gluegen-rt-natives-windows-i586.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/gluegen.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/jogl-all-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/jogl-all-natives-windows-i586.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/jogl-all.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/opencsv-2.1.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/org.convexhull.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/org.jzy3d-0.9-src.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/org.jzy3d-0.9.jar" sourcepath="/GlobalGeneticOptimalizer/lib/jzy3d/org.jzy3d-0.9-src.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/swt-debug.jar"/>
+	<classpathentry kind="lib" path="/GlobalGeneticOptimalizer/lib/jzy3d/swt.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

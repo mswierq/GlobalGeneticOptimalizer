@@ -1,0 +1,7 @@
+org.codehaus.janino
+org.codehaus.janino.samples
+org.codehaus.janino.tools
+org.codehaus.janino.util
+org.codehaus.janino.util.enumerator
+org.codehaus.janino.util.iterator
+org.codehaus.janino.util.resource

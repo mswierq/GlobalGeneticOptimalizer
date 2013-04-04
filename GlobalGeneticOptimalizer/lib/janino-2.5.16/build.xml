@@ -1,0 +1,106 @@
+<!--
+  Janino - An embedded Java[TM] compiler
+
+  Copyright (c) 2001-2007, Arno Unkrig
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+     1. Redistributions of source code must retain the above copyright
+        notice, this list of conditions and the following disclaimer.
+     2. Redistributions in binary form must reproduce the above
+        copyright notice, this list of conditions and the following
+        disclaimer in the documentation and/or other materials
+        provided with the distribution.
+     3. The name of the author may not be used to endorse or promote
+        products derived from this software without specific prior
+        written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+  IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//-->
+
+<project name="Janino" default="compile" basedir=".">
+	<description>
+		Build file for the Janino project
+	</description>
+
+	<property environment="env"/>
+	<property file="build.properties"/>
+
+	<target name="compile" description="Compile the source">
+		<mkdir dir="build/classes"/>
+
+		<javac
+			fork="yes"
+			executable="${jdk_1_2_2_home}/bin/javac"
+			source="1.2"
+			target="1.1"
+			srcdir="src" excludes="org/codehaus/janino/AstGeneratorVisitor.java"
+			destdir="build/classes"
+			debug="true"
+			debuglevel="lines,vars,source"
+		/>
+	</target>
+
+	<target name="javadoc" description="Build JAVADOC" depends="compile">
+		<mkdir dir="build/javadoc"/>
+		<javadoc
+			header="&lt;a href=&quot;http://janino.net/&quot; target=&quot;_top&quot;&gt;janino.net&lt;/a&gt;"
+			splitindex="true"
+			doctitle="Janino ${version}"
+			windowtitle="Janino ${version}"
+			overview="src/overview.html"
+			sourcepath="src"
+			classpath="build/classes;${ant_jar}"
+			destdir="build/javadoc"
+			packagenames="${javadoc_packages}"
+		>
+			<link offline="true" href="${jdk_javadoc_remote}" packagelistloc="${jdk_javadoc_local}"/>
+			<link offline="true" href="${ant_javadoc_remote}" packagelistloc="${ant_javadoc_local}"/>
+		</javadoc>
+	</target>
+
+	<target name="jar" description="Create the janino jar." depends="compile">
+		<mkdir dir="build/lib"/>
+		<jar jarfile="build/lib/janino.jar" basedir="build/classes"/>
+	</target>
+
+	<target name="srcjar" description="Create a janino source jar." depends="compile">
+		<mkdir dir="build/lib"/>
+		<jar jarfile="build/lib/janino-src.jar" basedir="src"/>
+	</target>
+ 
+	<target name="dist" description="Generate the distribution" depends="jar, javadoc">
+		<echo level="info">Signing jar: build/lib/janino.jar</echo>
+		<exec executable="jarsigner">
+			<arg value="-keystore"/><arg value="dummy-keystore"/>
+			<arg value="-storepass"/><arg value="storepass"/>
+			<arg value="-keypass"/><arg value="keypass"/>
+			<arg value="build/lib/janino.jar"/>
+			<arg value="dummy"/>
+		</exec>
+
+		<zip destfile="${janino_zip}">
+			<zipfileset file="build/lib/janino.jar" prefix="janino-${version}/lib"/>
+			<zipfileset dir="build/javadoc" prefix="janino-${version}/javadoc"/>
+			<zipfileset dir="src" prefix="janino-${version}/src"/>
+			<zipfileset file="build.*" prefix="janino-${version}"/>
+		</zip>
+	</target>
+
+	<target name="clean" description="Clean built files.">
+		<delete dir="build"/>
+	</target>
+</project>
