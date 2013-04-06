@@ -49,16 +49,13 @@ public class CrossSimple implements ICrossOperator{
 
 	private void crossPair(Specimen specimenA, Specimen specimenB) {
 		int chSize = specimenA.getChromosome().size();
+		
 		int crossPosition = (int) (chSize*randomNumbersGenerator.nextDouble());
 		
-		ArrayList<Double> newChromosomeA = new ArrayList<Double>(specimenB.getChromosome().subList(0, crossPosition));
-		ArrayList<Double> newChromosomeB = new ArrayList<Double>(specimenA.getChromosome().subList(0, crossPosition));
-		Double a = randomNumbersGenerator.nextDouble();
-		
-		for(int i = crossPosition; i < chSize; i++) {
-			newChromosomeA.add(specimenA.getChromosome().get(i)*a + specimenB.getChromosome().get(i)*(1-a));
-			newChromosomeB.add(specimenB.getChromosome().get(i)*a + specimenA.getChromosome().get(i)*(1-a));
-		}
+		ArrayList<Double> newChromosomeA = new ArrayList<Double>(specimenA.getChromosome().subList(0, crossPosition));
+		newChromosomeA.addAll(specimenB.getChromosome().subList(crossPosition, chSize));
+		ArrayList<Double> newChromosomeB = new ArrayList<Double>(specimenB.getChromosome().subList(0, crossPosition));
+		newChromosomeB.addAll(specimenA.getChromosome().subList(crossPosition, chSize));
 		
 		specimenA.setChromosome(newChromosomeA);
 		specimenB.setChromosome(newChromosomeB);
