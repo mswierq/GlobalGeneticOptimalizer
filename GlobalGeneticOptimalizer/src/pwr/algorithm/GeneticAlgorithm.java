@@ -40,7 +40,7 @@ public class GeneticAlgorithm {
 		this.iterationsL = iterationsL;
 		this.propabilityCross = propabilityCross;
 		this.propabilityMutation = propabilityMutation;
-		this.populationLimit = 100;
+		this.populationLimit = 25;
 		this.randomNumbersGenerator = new Random();
 		this.expression = expression;
 		this.selection = new RankingSelection(populationLimit);
@@ -53,7 +53,7 @@ public class GeneticAlgorithm {
 		this.maximumError = 0.001;
 		this.doneIterations = 0;
 		generateRandomPopulation();
-		eval(); //tymczasowo
+		eval(population); //tymczasowo
 		Collections.min(population);
 		firstBestMatch = population.get(0); //tymczasowo
 		secondBestMatch = population.get(1); //tymczasowo
@@ -76,7 +76,7 @@ public class GeneticAlgorithm {
 		}
 	}
 	
-	private void eval() {
+	private void eval(ArrayList<Specimen> population) {
 		FuncMap funcMap = new FunctionMapBase();
 		for(Specimen s : population) {			
 			s.setScore(expression.eval(s.getVarMap(), funcMap));
@@ -103,11 +103,19 @@ public class GeneticAlgorithm {
 	}
 	
 	private void replacePopulations() {
+		eval(population);
+		eval(intermediatePopulation);
+		
 		Collections.sort(population);
-		for(int i = 0; i > intermediatePopulation.size(); i++) {
-			Specimen s = population.get(populationLimit - i - 1);
-			s = intermediatePopulation.get(i);
+		Collections.sort(intermediatePopulation);
+		
+		for(int i = 0; i < intermediatePopulation.size(); i++) {
+			if(population.get(populationLimit - i - 1).getScore() > intermediatePopulation.get(i).getScore())
+				population.get(populationLimit - i - 1).setChromosome(intermediatePopulation.get(i).getChromosome());
+			else
+				break;
 		}
+		intermediatePopulation.clear();
 	}
 
 	public void execute() {
@@ -117,10 +125,10 @@ public class GeneticAlgorithm {
 			crossOperator.cross(intermediatePopulation,propabilityCross);
 			mutationOperator.mutate(intermediatePopulation,propabilityMutation,i);
 			replacePopulations();
-			eval();
-			if(checkStopCriteria()) {
-				break;
-			}
+			eval(population);
+//			if(checkStopCriteria()) {
+//				break;
+//			}
 		}
 	}
 

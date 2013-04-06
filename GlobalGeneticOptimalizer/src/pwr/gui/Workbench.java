@@ -468,7 +468,7 @@ public class Workbench {
 		rangeX2FromText.setText("-2");
 		rangeX2ToText.setText("10.1");
 		
-		iterationsText.setText("500");
+		iterationsText.setText("2500");
 		crossProbabilityText.setText("0.6");
 		mutationProbabilityText.setText("0.02");
 		

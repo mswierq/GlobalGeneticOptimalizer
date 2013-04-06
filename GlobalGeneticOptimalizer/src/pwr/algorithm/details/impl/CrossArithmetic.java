@@ -29,10 +29,7 @@ public class CrossArithmetic implements ICrossOperator {
 			}
 		}
 		
-		sItr = choosenSpecimens.iterator();
-		while(sItr.hasNext()) {
-			specimens.remove(sItr.next());
-		}
+		specimens.clear();
 		
 		if(choosenSpecimens.size() % 2 != 0) {
 			specimens.add(choosenSpecimens.get(choosenSpecimens.size()-1));
