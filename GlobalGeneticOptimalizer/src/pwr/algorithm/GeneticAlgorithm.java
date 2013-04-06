@@ -129,6 +129,7 @@ public class GeneticAlgorithm {
 //			if(checkStopCriteria()) {
 //				break;
 //			}
+			firstBestMatch = population.get(0);
 		}
 	}
 
