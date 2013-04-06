@@ -27,7 +27,6 @@ public class GeneticAlgorithm {
 	private Integer iterationsL;
 	private Double propabilityCross;
 	private Double propabilityMutation;
-	private Double stopCondition;
 	private Random randomNumbersGenerator;
 	private Expression expression;
 	private Specimen firstBestMatch;
@@ -42,7 +41,6 @@ public class GeneticAlgorithm {
 		this.propabilityCross = propabilityCross;
 		this.propabilityMutation = propabilityMutation;
 		this.populationLimit = 100;
-		this.stopCondition = 0.001;
 		this.randomNumbersGenerator = new Random();
 		this.expression = expression;
 		this.selection = new RankingSelection(populationLimit);
@@ -108,7 +106,7 @@ public class GeneticAlgorithm {
 		Collections.sort(population);
 		for(int i = 0; i > intermediatePopulation.size(); i++) {
 			Specimen s = population.get(populationLimit - i - 1);
-			s = intermediatePopulation.get(0);
+			s = intermediatePopulation.get(i);
 		}
 	}
 
