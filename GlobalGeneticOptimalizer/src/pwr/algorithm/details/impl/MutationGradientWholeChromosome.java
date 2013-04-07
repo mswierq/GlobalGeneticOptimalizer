@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.jzy3d.maths.Pair;
+
 import javacalculus.core.CalculusEngine;
 
 import com.graphbuilder.math.Expression;
@@ -17,14 +19,14 @@ import pwr.algorithm.Specimen;
 import pwr.algorithm.details.facade.IMutationOperator;
 import pwr.parser.FunctionMapBase;
 
-public class MutationGradientAllGenes implements IMutationOperator{
+public class MutationGradientWholeChromosome implements IMutationOperator {
 	private Random randomNumbersGenerator;
 	private List<Range> ranges;
 	private Integer iterations;
 	private Double bCoefficient;
 	private Map<EParameters, Expression> diffMap = new HashMap<EParameters, Expression>();
 	
-	public MutationGradientAllGenes(List<Range> ranges, Integer iterations, Expression expression) {
+	public MutationGradientWholeChromosome(List<Range> ranges, Integer iterations, Expression expression) {
 		this.ranges = ranges;
 		this.randomNumbersGenerator = new Random();
 		this.bCoefficient = 2.0;
@@ -55,29 +57,32 @@ public class MutationGradientAllGenes implements IMutationOperator{
 	public ArrayList<Specimen> mutate(ArrayList<Specimen> specimens, Double pm, Integer iteration) {
 		for(Specimen specimen : specimens){
 			if(randomNumbersGenerator.nextDouble() < pm)
-				mutateSpecimen(specimen, iteration+1);
+				mutateSpecimen(specimen, iteration+1, pm);
 		}
 		return specimens;
 	}
 
-	private void mutateSpecimen(Specimen specimen, Integer iteration) {
+	private void mutateSpecimen(Specimen specimen, Integer iteration, Double pm) {
 		double deltaFunctionValue;
 		Double chromosomeValue;
-		List<Double> chromosomeDelta = new ArrayList<Double>(specimen.getChromosome().size());
+		List<Pair<Double, Integer>> chromosomeDelta = new ArrayList<Pair<Double,Integer>>();
+//		List<Double> chromosomeDelta = new ArrayList<Double>(specimen.getChromosome().size());
 		
 		for(int i=0; i<specimen.getChromosome().size(); i++){
-			chromosomeValue = specimen.getChromosome().get(i);
-			if(randomNumbersGenerator.nextBoolean()){
-				deltaFunctionValue = getDeltaFunctionValue(iteration, ranges.get(i).getMax()-chromosomeValue);
-				specimen.getChromosome().set(i, 
-											 chromosomeValue + deltaFunctionValue);
+			if(randomNumbersGenerator.nextDouble() < pm){
+				chromosomeValue = specimen.getChromosome().get(i);
+				if(randomNumbersGenerator.nextBoolean()){
+					deltaFunctionValue = getDeltaFunctionValue(iteration, ranges.get(i).getMax()-chromosomeValue);
+					specimen.getChromosome().set(i, 
+												 chromosomeValue + deltaFunctionValue);
+				}
+				else{
+					deltaFunctionValue = getDeltaFunctionValue(iteration, chromosomeValue - ranges.get(i).getMin());
+					specimen.getChromosome().set(i, 
+							 					 chromosomeValue - deltaFunctionValue);
+				}
+				chromosomeDelta.add(new Pair<Double, Integer>(deltaFunctionValue, i));
 			}
-			else{
-				deltaFunctionValue = getDeltaFunctionValue(iteration, chromosomeValue - ranges.get(i).getMin());
-				specimen.getChromosome().set(i, 
-						 					 chromosomeValue - deltaFunctionValue);
-			}
-			chromosomeDelta.add(deltaFunctionValue);
 		}
 		
 		gradientMutation(specimen, chromosomeDelta);
@@ -91,19 +96,20 @@ public class MutationGradientAllGenes implements IMutationOperator{
 		return range*(1-random);
 	}
 	
-	private void gradientMutation(Specimen specimen, List<Double> chromosomeDelta) {
+	private void gradientMutation(Specimen specimen, List<Pair<Double, Integer>> chromosomeDelta) {
 		double gamma = 0.8;
 		List<Double> functionDelta = new ArrayList<Double>(chromosomeDelta.size());
 		
-		for(int i = 0; i < chromosomeDelta.size(); i++){
-			functionDelta.add(diffMap.get(EParameters.values()[i]).eval(specimen.getVarMap(), new FunctionMapBase()));
+		for(Pair<Double, Integer> gene  : chromosomeDelta){
+			functionDelta.add(diffMap.get(EParameters.values()[gene.b]).eval(specimen.getVarMap(), new FunctionMapBase()));	
 		}
 		
-		Double deltaValue = (gamma * (getVectorLength(chromosomeDelta)/getVectorLength(functionDelta)));
+		Double deltaValue = (gamma * (getPairVectorLength(chromosomeDelta)/getVectorLength(functionDelta)));
 		
-		for(int i=0; i<specimen.getChromosome().size(); i++){
-			specimen.getChromosome().set(i, 
-					 	specimen.getChromosome().get(i) - deltaValue*functionDelta.get(i));	
+		for(int i=0; i<chromosomeDelta.size(); i++){
+			int chromosomeIndex = chromosomeDelta.get(i).b;
+			specimen.getChromosome().set(chromosomeIndex, 
+					 					 specimen.getChromosome().get(chromosomeIndex) - deltaValue*functionDelta.get(i));	
 		}
 	}
 
@@ -112,6 +118,16 @@ public class MutationGradientAllGenes implements IMutationOperator{
 		
 		for(Double element : list){
 			sumSquared += Math.pow(element, 2);
+		}
+		
+		return Math.sqrt(sumSquared);
+	}
+	
+	private Double getPairVectorLength(List<Pair<Double, Integer>> chromosomeDelta) {
+		Double sumSquared = 0.0;
+		
+		for(Pair<Double, Integer> element : chromosomeDelta){
+			sumSquared += Math.pow(element.a, 2);
 		}
 		
 		return Math.sqrt(sumSquared);

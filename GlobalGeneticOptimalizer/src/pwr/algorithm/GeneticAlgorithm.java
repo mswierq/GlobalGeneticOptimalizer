@@ -31,7 +31,7 @@ public class GeneticAlgorithm {
 	private Expression expression;
 	private Specimen firstBestMatch;
 	private Specimen secondBestMatch;
-//	private final Double maximumError;
+	private final Double maximumError;
 	private Integer doneIterations;
 	
 	public GeneticAlgorithm(Map<EParameters, Range> limits, Integer iterationsL, Double propabilityCross, Double propabilityMutation, ECross crossAlgorithm, EMutation mutationAlgorithm, Expression expression) {
@@ -50,7 +50,7 @@ public class GeneticAlgorithm {
 																	iterationsL,
 																	expression);
 		this.intermediatePopulation = new ArrayList<Specimen>();
-//		this.maximumError = 0.001;
+		this.maximumError = 0.001;
 		this.doneIterations = 0;
 		generateRandomPopulation();
 		eval(population); //tymczasowo
@@ -83,24 +83,24 @@ public class GeneticAlgorithm {
 		}
 	}
 	
-//	private boolean checkStopCriteria() {
-//		Collections.sort(population);
-//		firstBestMatch = population.get(0);
-//		secondBestMatch = population.get(1);
-//		Double scoreError = Math.abs(firstBestMatch.getScore() - secondBestMatch.getScore());
-//		
-//		if(scoreError > maximumError)
-//			return false;
-//		
-//		List<Double> firstChromosome = firstBestMatch.getChromosome();
-//		List<Double> secondChromosome = secondBestMatch.getChromosome();
-//		for(int i = 0; i < firstBestMatch.getChromosome().size(); i++) {
-//			Double xError = Math.abs(firstChromosome.get(i) - secondChromosome.get(i));
-//			if(xError > maximumError)
-//				return false;
-//		}
-//		return true;
-//	}
+	private boolean checkStopCriteria() {
+		Collections.sort(population);
+		firstBestMatch = population.get(0);
+		secondBestMatch = population.get(1);
+		Double scoreError = Math.abs(firstBestMatch.getScore() - secondBestMatch.getScore());
+		
+		if(scoreError > maximumError)
+			return false;
+		
+		List<Double> firstChromosome = firstBestMatch.getChromosome();
+		List<Double> secondChromosome = secondBestMatch.getChromosome();
+		for(int i = 0; i < firstBestMatch.getChromosome().size(); i++) {
+			Double xError = Math.abs(firstChromosome.get(i) - secondChromosome.get(i));
+			if(xError > maximumError)
+				return false;
+		}
+		return true;
+	}
 	
 	private void replacePopulations() {
 		eval(population);

@@ -22,10 +22,16 @@ public class AlgorithmPicker {
 	
 	public static IMutationOperator getMutationOperator(EMutation mutationAlgorithm, List<Range> ranges, Integer iterations, Expression expression){
 		switch(mutationAlgorithm){
-		case equal: return new MutationEqual(ranges);
-		case unequal: return new MutationUnequal(ranges, iterations);
+//		case equal: return new MutationEqual(ranges);
+		case equal: return new MutationEqualAll(ranges);
+		
+//		case unequal: return new MutationUnequal(ranges, iterations);
+		case unequal: return new MutationUnequalAll(ranges, iterations);
+		
 //		case gradient: return new MutationGradient(ranges, iterations, expression);
+//		case gradient: return new MutationGradientWholeChromosome(ranges, iterations, expression);
 		case gradient: return new MutationGradientAllGenes(ranges, iterations, expression);
+		
 		default: return null;
 		}
 	}
