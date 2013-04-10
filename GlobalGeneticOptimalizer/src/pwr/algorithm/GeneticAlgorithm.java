@@ -29,8 +29,7 @@ public class GeneticAlgorithm {
 	private Double propabilityMutation;
 	private Random randomNumbersGenerator;
 	private Expression expression;
-	private Specimen firstBestMatch;
-	private Specimen secondBestMatch;
+	private Specimen bestMatch;
 	private final Double maximumError;
 	private Integer doneIterations;
 	
@@ -55,8 +54,7 @@ public class GeneticAlgorithm {
 		generateRandomPopulation();
 		eval(population); //tymczasowo
 		Collections.min(population);
-		firstBestMatch = population.get(0); //tymczasowo
-		secondBestMatch = population.get(1); //tymczasowo
+		bestMatch = population.get(0); //tymczasowo
 	}
 	
 	private List<Double> generateChromosome(){
@@ -69,9 +67,8 @@ public class GeneticAlgorithm {
 	}
 	
 	private void generateRandomPopulation() {
-		
 		this.population = new ArrayList<Specimen>(populationLimit);
-		for(int i = 0; i < populationLimit; i++) {			
+		for(int i = 0; i < populationLimit; i++) {	
 			population.add(new Specimen(generateChromosome()));
 		}
 	}
@@ -85,19 +82,22 @@ public class GeneticAlgorithm {
 	
 	private boolean checkStopCriteria() {
 		Collections.sort(population);
-		firstBestMatch = population.get(0);
-		secondBestMatch = population.get(1);
-		Double scoreError = Math.abs(firstBestMatch.getScore() - secondBestMatch.getScore());
+		bestMatch = population.get(0);
 		
-		if(scoreError > maximumError)
-			return false;
-		
-		List<Double> firstChromosome = firstBestMatch.getChromosome();
-		List<Double> secondChromosome = secondBestMatch.getChromosome();
-		for(int i = 0; i < firstBestMatch.getChromosome().size(); i++) {
-			Double xError = Math.abs(firstChromosome.get(i) - secondChromosome.get(i));
-			if(xError > maximumError)
+		for(Specimen specimen: population) {
+			if(specimen == bestMatch)
+				continue;
+			
+			Double scoreError = Math.abs(bestMatch.getScore() - specimen.getScore());
+			
+			if(scoreError > maximumError)
 				return false;
+			
+			for(int j = 0; j < specimen.getChromosome().size(); j++) {
+				Double xError = Math.abs(bestMatch.getScore() - specimen.getScore());
+				if(xError > maximumError)
+					return false;
+			}
 		}
 		return true;
 	}
@@ -126,15 +126,14 @@ public class GeneticAlgorithm {
 			mutationOperator.mutate(intermediatePopulation,propabilityMutation,i);
 			replacePopulations();
 			eval(population);
-//			if(checkStopCriteria()) {
-//				break;
-//			}
-			firstBestMatch = population.get(0);
+			if(checkStopCriteria()) {
+				break;
+			}
 		}
 	}
 
 	public Specimen getBestMatch() {
-		return firstBestMatch;
+		return bestMatch;
 	}
 
 	@Override
@@ -148,8 +147,7 @@ public class GeneticAlgorithm {
 				rs += "null\n";
 		}
 		
-		rs += "\nbest match = " + firstBestMatch.getScore() + "; " + firstBestMatch + "\n";
-		rs += "\nbest match = " + secondBestMatch.getScore() + "; " + secondBestMatch + "\n";
+		rs += "\ncurrent best match = " + bestMatch.getScore() + "; " + bestMatch + "\n";
 		rs += "\nDone iterations = " + doneIterations + "\n";
 		
 		return rs;
