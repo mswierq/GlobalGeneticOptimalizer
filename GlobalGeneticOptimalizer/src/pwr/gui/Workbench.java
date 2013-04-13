@@ -463,6 +463,7 @@ public class Workbench {
 
 	private void initWidgetsValues() {
 		equationTextField.setText("(1+(x1+x2+1)^2*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2))*(30+(2*x1-3*x2)^2*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2))");
+//		equationTextField.setText("x1^2+x2^2");
 		rangeX1FromText.setText("-7");
 		rangeX1ToText.setText("2.5");
 		rangeX2FromText.setText("-2");
@@ -484,15 +485,100 @@ public class Workbench {
 												   selectedCrossAlgorithm,
 												   selectedMutationAlgorithm,
 												   equation);
-		System.out.println(ga);
-		System.out.println();
+			System.out.println(ga);
+			System.out.println();
+			
+			lblResultScore.setText("Obliczanie");
+			
+			ga.execute();
+		if(!validateResults(ga, limits)){
+			runGeneticAlgorithm(equation);
+		} else{
+			printResults(ga.getBestMatch());
+			
+			System.out.println(ga);	
+		}
+	}
+
+	private boolean validateResults(GeneticAlgorithm ga, Map<EParameters, Range> limits) {
+		Specimen bestMatch = ga.getBestMatch();
+		boolean result = true;
 		
-		lblResultScore.setText("Obliczanie");
+		if(checkBoxX1.isSelected()){
+			 if(checkDiffMin(EParameters.X1, limits, bestMatch)){
+				 result = false;
+				 rangeX1ToText.setText("" + (limits.get(EParameters.X1).getMax() - (limits.get(EParameters.X1).getRange())));
+				 rangeX1FromText.setText("" + (limits.get(EParameters.X1).getMin() - (limits.get(EParameters.X1).getRange())));
+			 } else if(checkDiffMax(EParameters.X1, limits, bestMatch)){
+				 result = false;
+				 rangeX1ToText.setText("" + (limits.get(EParameters.X1).getMax() + (limits.get(EParameters.X1).getRange())));
+				 rangeX1FromText.setText("" + (limits.get(EParameters.X1).getMin() + (limits.get(EParameters.X1).getRange())));
+			 } 
+		}
+		if(checkBoxX2.isSelected()){
+			 if(checkDiffMin(EParameters.X2, limits, bestMatch)){
+				 result = false;
+				 rangeX2ToText.setText("" + (limits.get(EParameters.X2).getMax() - (limits.get(EParameters.X2).getRange())));
+				 rangeX2FromText.setText("" + (limits.get(EParameters.X2).getMin() - (limits.get(EParameters.X2).getRange())));
+			 } else if(checkDiffMax(EParameters.X2, limits, bestMatch)){
+				 result = false;
+				 rangeX2ToText.setText("" + (limits.get(EParameters.X2).getMax() + (limits.get(EParameters.X2).getRange())));
+				 rangeX2FromText.setText("" + (limits.get(EParameters.X2).getMin() + (limits.get(EParameters.X2).getRange())));
+				 
+			 } 
+		}
+//		if(checkBoxX3.isSelected()){
+//			 if(checkDiffMin(EParameters.X3, limits, bestMatch)){
+//				 result = false;
+//				 rangeX3ToText.setText("" + (limits.get(EParameters.X3).getMax() - (limits.get(EParameters.X3).getRange()/2)));
+//				 rangeX3FromText.setText("" + (limits.get(EParameters.X3).getMin() - (limits.get(EParameters.X3).getRange()/2)));
+//			 } else if(checkDiffMax(EParameters.X3, limits, bestMatch)){
+//				 result = false;
+//				 rangeX3ToText.setText("" + (limits.get(EParameters.X3).getMax() + (limits.get(EParameters.X3).getRange()/2)));
+//				 rangeX3FromText.setText("" + (limits.get(EParameters.X3).getMin() + (limits.get(EParameters.X3).getRange()/2)));
+//			 } 
+//		}
+//		if(checkBoxX4.isSelected()){
+//			 if(checkDiffMin(EParameters.X4, limits, bestMatch)){
+//				 result = false;
+//				 rangeX4ToText.setText("" + limits.get(EParameters.X4).getMin());
+//				 rangeX4FromText.setText("" + (limits.get(EParameters.X4).getMin() - (limits.get(EParameters.X4).getRange())));
+//			 } else if(checkDiffMax(EParameters.X4, limits, bestMatch)){
+//				 result = false;
+//				 rangeX4FromText.setText("" + limits.get(EParameters.X4).getMax());
+//				 rangeX4ToText.setText("" + (limits.get(EParameters.X4).getMax() + (limits.get(EParameters.X4).getRange())));
+//			 } 
+//		}
+//		if(checkBoxX5.isSelected()){
+//			 if(checkDiffMin(EParameters.X5, limits, bestMatch)){
+//				 result = false;
+//				 rangeX5ToText.setText("" + limits.get(EParameters.X5).getMin());
+//				 rangeX5FromText.setText("" + (limits.get(EParameters.X5).getMin() - (limits.get(EParameters.X5).getRange())));
+//			 } else if(checkDiffMax(EParameters.X5, limits, bestMatch)){
+//				 result = false;
+//				 rangeX5FromText.setText("" + limits.get(EParameters.X5).getMax());
+//				 rangeX5ToText.setText("" + (limits.get(EParameters.X5).getMax() + (limits.get(EParameters.X5).getRange())));
+//			 } 
+//		}
 		
-		ga.execute();
-		printResults(ga.getBestMatch());
+		if(result == false){
+			System.out.println("############################################################");
+			System.out.println("new ranges X1: " + rangeX1FromText.getText() + " -> " + rangeX1ToText.getText());
+			System.out.println("new ranges X2: " + rangeX2FromText.getText() + " -> " + rangeX2ToText.getText());
+			System.out.println("############################################################");
+		}
 		
-		System.out.println(ga);
+		return result;
+	}
+	
+	private boolean checkDiffMax(EParameters variable, Map<EParameters, Range> limits, Specimen bestMatch) {
+		Double diff = Math.abs((limits.get(variable).getMax()-bestMatch.getChromosome().get(variable.ordinal()))/limits.get(variable).getMax());
+		return diff < 0.1;
+	}
+
+	private boolean checkDiffMin(EParameters variable, Map<EParameters, Range> limits, Specimen bestMatch){
+		Double diff = Math.abs(		(limits.get(variable).getMin()-bestMatch.getChromosome().get(variable.ordinal()))	/limits.get(variable).getMin()	);
+		return diff < 0.1;
 	}
 
 	private void printResults(Specimen bestMatch) {

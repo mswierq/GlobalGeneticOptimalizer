@@ -39,4 +39,8 @@ public class Range {
 	public boolean contains(Double value) {
 		return (value <= max && value >= min);
 	}
+
+	public Double getRange() {
+		return Math.abs(max - min);
+	}
 }

@@ -7,15 +7,14 @@ import java.util.Map;
 import java.util.Random;
 
 import javacalculus.core.CalculusEngine;
-
-import com.graphbuilder.math.Expression;
-import com.graphbuilder.math.ExpressionTree;
-
 import pwr.algorithm.EParameters;
 import pwr.algorithm.Range;
 import pwr.algorithm.Specimen;
 import pwr.algorithm.details.facade.IMutationOperator;
 import pwr.parser.FunctionMapBase;
+
+import com.graphbuilder.math.Expression;
+import com.graphbuilder.math.ExpressionTree;
 
 public class MutationGradientAllGenes implements IMutationOperator{
 	private Random randomNumbersGenerator;
