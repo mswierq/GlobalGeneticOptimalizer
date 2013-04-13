@@ -34,6 +34,6 @@
 	<classpathentry kind="lib" path="lib/jzy3d/jogl-all-natives-macosx-universal.jar"/>
 	<classpathentry kind="lib" path="lib/jzy3d/jogl-all-natives-solaris-amd64.jar"/>
 	<classpathentry kind="lib" path="lib/jzy3d/jogl-all-natives-solaris-i586.jar"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Calculus API"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Calculus API"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

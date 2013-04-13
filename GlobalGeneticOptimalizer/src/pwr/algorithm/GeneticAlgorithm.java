@@ -1,10 +1,17 @@
 package pwr.algorithm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import pwr.algorithm.details.facade.ICrossOperator;
 import pwr.algorithm.details.facade.IMutationOperator;
@@ -57,19 +64,22 @@ public class GeneticAlgorithm {
 		bestMatch = population.get(0); //tymczasowo
 	}
 	
-	private List<Double> generateChromosome(){
+	private List<Double> generateChromosome(SortedSet<EParameters> sortedVarSet){
 		ArrayList<Double> chromosome = new ArrayList<Double>(limits.size());
 		
-		for(Range limit : limits.values())
-			chromosome.add(limit.scale(randomNumbersGenerator.nextDouble()));
+		for(EParameters var : sortedVarSet)
+			chromosome.add(limits.get(var).scale(randomNumbersGenerator.nextDouble()));
 		
 		return chromosome;
 	}
 	
 	private void generateRandomPopulation() {
 		this.population = new ArrayList<Specimen>(populationLimit);
+		SortedSet<EParameters> sortedVarSet = new TreeSet<>();
+		sortedVarSet.addAll(limits.keySet());
+		
 		for(int i = 0; i < populationLimit; i++) {	
-			population.add(new Specimen(generateChromosome()));
+			population.add(new Specimen(generateChromosome(sortedVarSet)));
 		}
 	}
 	
@@ -126,9 +136,9 @@ public class GeneticAlgorithm {
 			mutationOperator.mutate(intermediatePopulation,propabilityMutation,i);
 			replacePopulations();
 			eval(population);
-			if(checkStopCriteria()) {
-				break;
-			}
+//			if(checkStopCriteria()) {
+//				break;
+//			}
 		}
 	}
 
