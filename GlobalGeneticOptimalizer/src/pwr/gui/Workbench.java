@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ import pwr.algorithm.EParameters;
 import pwr.algorithm.GeneticAlgorithm;
 import pwr.algorithm.Range;
 import pwr.algorithm.Specimen;
+import pwr.algorithm.details.impl.ResultsGenerator;
 import pwr.chartCreator.ChartParametersFactory;
 import pwr.chartCreator.ChartPrinter;
 import pwr.parser.FunctionMapBase;
@@ -78,6 +80,8 @@ public class Workbench {
 	private JLabel lblResultX3;
 	private JLabel lblResultX4;
 	private JLabel lblResultX5;
+	
+	private ResultsGenerator results;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -98,6 +102,7 @@ public class Workbench {
 		
 		this.selectedCrossAlgorithm = ECross.arithmetic;
 		this.selectedMutationAlgorithm = EMutation.equal;
+		this.results = new ResultsGenerator();
 	}
 
 	private void initialize() {
@@ -354,10 +359,19 @@ public class Workbench {
 			public void actionPerformed(ActionEvent arg0) {
 				Expression equation = ExpressionTree.parse(equationTextField.getText());
 				
+				results.clearMatchTrace();
+				results.setMatchTraceSaveFile("matchTrace.m");
+				
 				runGeneticAlgorithm(equation);
 				
 				if(checkBoxShowChart.isSelected()){
 					printChart(equation);
+				}
+				
+				try {
+					results.saveMatchTraceToFile();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		});
@@ -494,6 +508,9 @@ public class Workbench {
 			lblResultScore.setText("Obliczanie");
 			
 			ga.execute();
+			
+			results.addMatchToTrace(ga.getBestMatch());
+			
 		if(!validateResults(ga, limits)){
 			runGeneticAlgorithm(equation);
 		} else{
