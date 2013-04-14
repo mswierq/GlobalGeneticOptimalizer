@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.Panel;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -103,14 +104,16 @@ public class Workbench {
 		Settings.getInstance().setHardwareAccelerated(true);
 		
 		frmGlobalgenericoptimalizer = new JFrame();
-		frmGlobalgenericoptimalizer.setResizable(false);
+		frmGlobalgenericoptimalizer.setResizable(true);
 		frmGlobalgenericoptimalizer.setTitle("GlobalGenericOptimalizer");
 		frmGlobalgenericoptimalizer.setBounds(100, 100, 651, 704);
 		frmGlobalgenericoptimalizer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmGlobalgenericoptimalizer.getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
 		
 		Panel panel = new Panel();
-		frmGlobalgenericoptimalizer.getContentPane().add(panel);
+		ScrollPane scrollPanel = new ScrollPane();
+		scrollPanel.add(panel);
+		frmGlobalgenericoptimalizer.getContentPane().add(scrollPanel);
 		panel.setLayout(new MigLayout("", "[81.00px][77.00px,grow,fill][46.00px][77.00px,grow,center][35px,fill]", "[][][][23px][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]"));
 		
 		
