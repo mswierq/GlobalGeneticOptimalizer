@@ -101,8 +101,20 @@ public class MutationGradientAllGenes implements IMutationOperator{
 		Double deltaValue = (gamma * (getVectorLength(chromosomeDelta)/getVectorLength(functionDelta)));
 		
 		for(int i=0; i<specimen.getChromosome().size(); i++){
-			specimen.getChromosome().set(i, 
-					 	specimen.getChromosome().get(i) - deltaValue*functionDelta.get(i));	
+//==================
+//			Wersja bez sprawdzania zakresów
+//			specimen.getChromosome().set(i, 
+//					 	specimen.getChromosome().get(i) - deltaValue*functionDelta.get(i));
+//===================			
+			Double currentValue = specimen.getChromosome().get(i) - deltaValue*functionDelta.get(i);
+			if(currentValue <= ranges.get(i).getMax() && currentValue >= ranges.get(i).getMin()){
+				specimen.getChromosome().set(i, 
+					 						 currentValue);
+			} else { 
+				currentValue = currentValue >= ranges.get(i).getMax() ? ranges.get(i).getMax() : ranges.get(i).getMin();
+				specimen.getChromosome().set(i, 
+						 					 currentValue);
+			}
 		}
 	}
 
