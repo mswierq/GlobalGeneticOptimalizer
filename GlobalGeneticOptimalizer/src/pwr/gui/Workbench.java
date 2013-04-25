@@ -26,7 +26,18 @@ import javax.swing.SwingConstants;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.jzy3d.chart.Chart;
+import org.jzy3d.chart.ChartLauncher;
+import org.jzy3d.colors.ColorMapper;
+import org.jzy3d.colors.colormaps.ColorMapRainbow;
 import org.jzy3d.global.Settings;
+import org.jzy3d.maths.Coord3d;
+import org.jzy3d.plot3d.builder.Builder;
+import org.jzy3d.plot3d.builder.Mapper;
+import org.jzy3d.plot3d.builder.concrete.OrthonormalGrid;
+import org.jzy3d.plot3d.primitives.Point;
+import org.jzy3d.plot3d.primitives.Shape;
+import org.jzy3d.plot3d.rendering.canvas.Quality;
 
 import pwr.algorithm.ECross;
 import pwr.algorithm.EMutation;
@@ -83,6 +94,7 @@ public class Workbench {
 	private JLabel lblResultX5;
 	
 	private ResultsGenerator results;
+	private static GeneticAlgorithm geneticAlgorithm = null;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -490,8 +502,8 @@ public class Workbench {
 	}
 
 	private void initWidgetsValues() {
-		equationTextField.setText("(4-2.1*x1^2+x1^(4/3))*x1^2+x1*x2+(-4+4*x2^2)*x2^2");  //Funkcja przy ktorej pojawia sie NaN
-//		equationTextField.setText("(1+(x1+x2+1)^2*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2))*(30+(2*x1-3*x2)^2*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2))");
+//		equationTextField.setText("(4-2.1*x1^2+x1^(4/3))*x1^2+x1*x2+(-4+4*x2^2)*x2^2");  //Funkcja przy ktorej pojawia sie NaN
+		equationTextField.setText("(1+(x1+x2+1)^2*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2))*(30+(2*x1-3*x2)^2*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2))");
 //		equationTextField.setText("x1^2+x2^2");
 		rangeX1FromText.setText("-7");
 		rangeX1ToText.setText("2.5");
@@ -507,24 +519,24 @@ public class Workbench {
 	
 	private void runGeneticAlgorithm(Expression equation) {
 		Map<EParameters,Range> limits = setFunctionLimits();
-		GeneticAlgorithm ga = new GeneticAlgorithm(limits,
-												   getIntegerTextValue(iterationsText),
-												   getDoubleTextValue(crossProbabilityText),
-												   getDoubleTextValue(mutationProbabilityText),
-												   selectedCrossAlgorithm,
-												   selectedMutationAlgorithm,
-												   equation);
-			System.out.println(ga);
+		geneticAlgorithm  = new GeneticAlgorithm(limits,
+										   		 getIntegerTextValue(iterationsText),
+												 getDoubleTextValue(crossProbabilityText),
+												 getDoubleTextValue(mutationProbabilityText),
+											     selectedCrossAlgorithm,
+												 selectedMutationAlgorithm,
+												 equation);
+			System.out.println(geneticAlgorithm);
 			System.out.println();
 			
 			lblResultScore.setText("Obliczanie");
 			
-			ga.execute();
+			geneticAlgorithm.execute();
 			
-			results.addMatchToTrace(ga.getBestMatch());
+			results.addMatchToTrace(geneticAlgorithm.getBestMatch());
 			
-			printResults(ga.getBestMatch());
-			System.out.println(ga);	
+			printResults(geneticAlgorithm.getBestMatch());
+			System.out.println(geneticAlgorithm);	
 	}
 
 	private void printResults(Specimen bestMatch) {
@@ -558,11 +570,38 @@ public class Workbench {
 			variables.setValue("e", Math.E);
 		FuncMap functions = new FunctionMapBase();
 		
-		ChartPrinter.printGridFunction3D(ChartParametersFactory.getMapper(equation, variables, functions), 
-										 equationTextField.getText(), 
-										 ChartParametersFactory.getRange(rangeXFrom, rangeXTo), 
-										 ChartParametersFactory.getRange(rangeYFrom, rangeYTo), 
-										 stepLength);
+		//Przygotowanie wykresu funkcji
+		Mapper mapper = ChartParametersFactory.getMapper(equation, variables, functions);
+
+		org.jzy3d.maths.Range rangeX = ChartParametersFactory.getRange(rangeXFrom, rangeXTo);
+		org.jzy3d.maths.Range rangeY = ChartParametersFactory.getRange(rangeYFrom, rangeYTo);
+		int stepsX = Math.round((float)(rangeX.getMax() - rangeX.getMin())/(float)stepLength);
+		int stepsY = Math.round((float)(rangeY.getMax() - rangeY.getMin())/(float)stepLength);
+
+		Shape surface = Builder.buildOrthonormal(new OrthonormalGrid(rangeX, stepsX, rangeY, stepsY), mapper);
+		surface.setColorMapper(new ColorMapper(new ColorMapRainbow(), surface.getBounds().getZmin(), surface.getBounds().getZmax(),
+							   new org.jzy3d.colors.Color(1, 1, 1, .5f)));
+		surface.setFaceDisplayed(true);
+		surface.setWireframeDisplayed(false);
+		surface.setWireframeColor(org.jzy3d.colors.Color.BLACK);
+		
+		//Przygotowanie najlepszego punktu
+		Point point = null;
+		if(geneticAlgorithm != null) {
+			Specimen bestMatch = geneticAlgorithm.getBestMatch();
+			point = new Point(new Coord3d(bestMatch.getChromosome().get(0),
+							  			  bestMatch.getChromosome().get(1),
+							  			  bestMatch.getScore()),
+							  org.jzy3d.colors.Color.RED,
+							  7.5f);
+		}
+
+		//Rysowanie wykresu
+		Chart chart = new Chart(Quality.Advanced);
+		chart.getScene().getGraph().add(surface);
+		if(point != null)
+			chart.getScene().getGraph().add(point);
+		ChartLauncher.openChart(chart);
 	}
 	
 	private Double getDoubleTextValue(JTextField text){
