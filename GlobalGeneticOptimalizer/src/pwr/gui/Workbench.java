@@ -220,6 +220,7 @@ public class Workbench {
 			panel.add(lblCloseColonX3, "cell 4 6");
 		
 		checkBoxX4 = new JCheckBox("Zakres x4: (");
+		checkBoxX4.setEnabled(false);
 		panel.add(checkBoxX4, "cell 0 7,alignx right");
 		
 			rangeX4FromText = new JTextField();
@@ -239,6 +240,7 @@ public class Workbench {
 			panel.add(lblCloseColonX4, "cell 4 7");
 		
 		checkBoxX5 = new JCheckBox("Zakres x5: (");
+		checkBoxX5.setEnabled(false);
 		panel.add(checkBoxX5, "cell 0 8,alignx right");
 		
 			rangeX5FromText = new JTextField();
@@ -463,6 +465,13 @@ public class Workbench {
 			public void itemStateChanged(ItemEvent arg0) {
 				rangeX1FromText.setEnabled(checkBoxX1.isSelected());
 				rangeX1ToText.setEnabled(checkBoxX1.isSelected());
+				if(checkBoxX1.isSelected()) {
+					checkBoxX2.setEnabled(true);
+				}
+				else {
+					checkBoxX2.setEnabled(false);
+					checkBoxX2.setSelected(false);
+				}
 			}
 		});
 		
@@ -470,6 +479,13 @@ public class Workbench {
 			public void itemStateChanged(ItemEvent arg0) {
 				rangeX2FromText.setEnabled(checkBoxX2.isSelected());
 				rangeX2ToText.setEnabled(checkBoxX2.isSelected());
+				if(checkBoxX2.isSelected()) {
+					checkBoxX3.setEnabled(true);
+				}
+				else {
+					checkBoxX3.setEnabled(false);
+					checkBoxX3.setSelected(false);
+				}
 			}
 		});
 		
@@ -477,6 +493,13 @@ public class Workbench {
 			public void itemStateChanged(ItemEvent arg0) {
 				rangeX3FromText.setEnabled(checkBoxX3.isSelected());
 				rangeX3ToText.setEnabled(checkBoxX3.isSelected());
+				if(checkBoxX3.isSelected()) {
+					checkBoxX4.setEnabled(true);
+				}
+				else {
+					checkBoxX4.setEnabled(false);
+					checkBoxX4.setSelected(false);
+				}
 			}
 		});
 		
@@ -484,6 +507,13 @@ public class Workbench {
 			public void itemStateChanged(ItemEvent arg0) {
 				rangeX4FromText.setEnabled(checkBoxX4.isSelected());
 				rangeX4ToText.setEnabled(checkBoxX4.isSelected());
+				if(checkBoxX4.isSelected()) {
+					checkBoxX5.setEnabled(true);
+				}
+				else {
+					checkBoxX5.setEnabled(false);
+					checkBoxX5.setSelected(false);
+				}
 			}
 		});
 		
