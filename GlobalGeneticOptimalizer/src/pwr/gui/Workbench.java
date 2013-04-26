@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,6 +56,7 @@ import com.graphbuilder.math.Expression;
 import com.graphbuilder.math.ExpressionTree;
 import com.graphbuilder.math.FuncMap;
 import com.graphbuilder.math.VarMap;
+import javax.swing.JComboBox;
 
 public class Workbench {
 
@@ -92,6 +94,9 @@ public class Workbench {
 	private JLabel lblResultX3;
 	private JLabel lblResultX4;
 	private JLabel lblResultX5;
+	private JComboBox<String> X1ChooseBox;
+	private JComboBox<String> X2ChooseBox;
+	private JCheckBox chckbxCrossSection;
 	
 	private ResultsGenerator results;
 	private static GeneticAlgorithm geneticAlgorithm = null;
@@ -132,7 +137,7 @@ public class Workbench {
 		ScrollPane scrollPanel = new ScrollPane();
 		scrollPanel.add(panel);
 		frmGlobalgenericoptimalizer.getContentPane().add(scrollPanel);
-		panel.setLayout(new MigLayout("", "[81.00px][77.00px,grow,fill][46.00px][77.00px,grow,center][35px,fill]", "[][][][23px][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]"));
+		panel.setLayout(new MigLayout("", "[81.00px,grow][77.00px,grow,fill][46.00px][77.00px,grow,center][35px,fill]", "[][][][23px][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]"));
 		
 		
 		//=======================	USTAWIENIA FUNKCJI	=================================//
@@ -366,8 +371,32 @@ public class Workbench {
 		panel.add(stepsLengthTextField, "cell 3 22,growx");
 		stepsLengthTextField.setColumns(10);
 		
+		crossGroup.add(rdbtnSimple);
+		crossGroup.add(rdbtnArithmetic);
+		
+		mutationGroup.add(rdbtnEqual);
+		mutationGroup.add(rdbtnUnequal);
+		mutationGroup.add(rdbtnGradient);
+		
+		chckbxCrossSection = new JCheckBox("Rysuj poziomice");
+		panel.add(chckbxCrossSection, "cell 0 23,alignx center");
+		
+		JLabel lblNarysuj = new JLabel("Narysuj dla zmiennych: ");
+		panel.add(lblNarysuj, "flowx,cell 0 24,alignx center");
+		
+		X1ChooseBox = new JComboBox<String>();
+		X1ChooseBox.setEnabled(false);
+		panel.add(X1ChooseBox, "flowx,cell 1 24");
+		
+		X2ChooseBox = new JComboBox<String>();
+		X2ChooseBox.setEnabled(false);
+		panel.add(X2ChooseBox, "cell 1 24");
+		
+		addItemToXChooseBoxes(1);
+		addItemToXChooseBoxes(2);
+		
 		JSeparator separator_5 = new JSeparator();
-		panel.add(separator_5, "cell 0 23 5 1,grow");
+		panel.add(separator_5, "cell 0 25 5 1,grow");
 		
 		JButton btnRunner = new JButton("Start");
 		btnRunner.addActionListener(new ActionListener() {
@@ -390,15 +419,17 @@ public class Workbench {
 				}
 			}
 		});
-		btnRunner.setSize(20, 20);
-		panel.add(btnRunner, "cell 4 24,growx,aligny top");
 		
-		crossGroup.add(rdbtnSimple);
-		crossGroup.add(rdbtnArithmetic);
+		JButton btnRedrawChart = new JButton("Przerysuj wykres");
+		btnRedrawChart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Expression equation = ExpressionTree.parse(equationTextField.getText());
+				printChart(equation);
+			}
+		});
 		
-		mutationGroup.add(rdbtnEqual);
-		mutationGroup.add(rdbtnUnequal);
-		mutationGroup.add(rdbtnGradient);
+		btnRedrawChart.setSize(20, 40);
+		panel.add(btnRedrawChart, "flowx,cell 0 26,alignx center");
 		
 		JButton btnHesjan = new JButton("Hesjan");
 		btnHesjan.addActionListener(new ActionListener() {
@@ -408,53 +439,56 @@ public class Workbench {
 				HessianCounter.countHessian(limits, equation);
 			}
 		});
-		panel.add(btnHesjan, "cell 4 25");
+		panel.add(btnHesjan, "cell 3 26,alignx center");
+		
+		btnRunner.setSize(20, 20);
+		panel.add(btnRunner, "cell 4 26,growx,aligny top");
 		
 		JSeparator separator_8 = new JSeparator();
-		panel.add(separator_8, "cell 0 29 5 1,grow");
+		panel.add(separator_8, "cell 0 30 5 1,grow");
 		
 		JLabel lblBestMatch = new JLabel("NAJLEPSZE DOPASOWANIE:");
-		panel.add(lblBestMatch, "cell 0 30 5 1,alignx center");
+		panel.add(lblBestMatch, "cell 0 31 5 1,alignx center");
 		
 		JSeparator separator_9 = new JSeparator();
-		panel.add(separator_9, "cell 0 31 5 1,grow");
+		panel.add(separator_9, "cell 0 32 5 1,grow");
 		
 		JLabel lblBestX1 = new JLabel("X1: ");
-		panel.add(lblBestX1, "cell 0 33,alignx right");
+		panel.add(lblBestX1, "cell 0 34,alignx right");
 		
 		lblResultX1 = new JLabel("");
-		panel.add(lblResultX1, "cell 1 33,alignx left");
+		panel.add(lblResultX1, "cell 1 34,alignx left");
 		
 		JLabel lblNewLabel = new JLabel("f([x]): ");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		panel.add(lblNewLabel, "cell 2 33,alignx right");
+		panel.add(lblNewLabel, "cell 2 34,alignx right");
 		
 		lblResultScore = new JLabel("");
-		panel.add(lblResultScore, "cell 3 33,alignx left");
+		panel.add(lblResultScore, "cell 3 34,alignx left");
 		
 		JLabel lblBestX2 = new JLabel("X2: ");
-		panel.add(lblBestX2, "cell 0 34,alignx right");
+		panel.add(lblBestX2, "cell 0 35,alignx right");
 		
 		lblResultX2 = new JLabel("");
-		panel.add(lblResultX2, "cell 1 34,alignx left");
+		panel.add(lblResultX2, "cell 1 35,alignx left");
 		
 		JLabel lblBestX3 = new JLabel("X3: ");
-		panel.add(lblBestX3, "cell 0 35,alignx right");
+		panel.add(lblBestX3, "cell 0 36,alignx right");
 		
 		lblResultX3 = new JLabel("");
-		panel.add(lblResultX3, "cell 1 35,alignx left");
+		panel.add(lblResultX3, "cell 1 36,alignx left");
 		
 		JLabel lblBestX4 = new JLabel("X4: ");
-		panel.add(lblBestX4, "cell 0 36,alignx right");
+		panel.add(lblBestX4, "cell 0 37,alignx right");
 		
 		lblResultX4 = new JLabel("");
-		panel.add(lblResultX4, "cell 1 36,alignx left");
+		panel.add(lblResultX4, "cell 1 37,alignx left");
 		
 		JLabel lblBestX5 = new JLabel("X5: ");
-		panel.add(lblBestX5, "cell 0 37,alignx right");
+		panel.add(lblBestX5, "cell 0 38,alignx right");
 		
 		lblResultX5 = new JLabel("");
-		panel.add(lblResultX5, "cell 1 37,alignx left");
+		panel.add(lblResultX5, "cell 1 38,alignx left");
 		
 		addWidgetsListeners();
 		initWidgetsValues();
@@ -481,8 +515,11 @@ public class Workbench {
 				rangeX2ToText.setEnabled(checkBoxX2.isSelected());
 				if(checkBoxX2.isSelected()) {
 					checkBoxX3.setEnabled(true);
+					chckbxCrossSection.setEnabled(true);
 				}
 				else {
+					chckbxCrossSection.setEnabled(false);
+					chckbxCrossSection.setSelected(false);
 					checkBoxX3.setEnabled(false);
 					checkBoxX3.setSelected(false);
 				}
@@ -495,10 +532,14 @@ public class Workbench {
 				rangeX3ToText.setEnabled(checkBoxX3.isSelected());
 				if(checkBoxX3.isSelected()) {
 					checkBoxX4.setEnabled(true);
+					enableXChooseBoxes(true);
+					addItemToXChooseBoxes(3);
 				}
 				else {
 					checkBoxX4.setEnabled(false);
 					checkBoxX4.setSelected(false);
+					enableXChooseBoxes(false);
+					removeItemFromXChooseBoxes(3);
 				}
 			}
 		});
@@ -509,10 +550,12 @@ public class Workbench {
 				rangeX4ToText.setEnabled(checkBoxX4.isSelected());
 				if(checkBoxX4.isSelected()) {
 					checkBoxX5.setEnabled(true);
+					addItemToXChooseBoxes(4);
 				}
 				else {
 					checkBoxX5.setEnabled(false);
 					checkBoxX5.setSelected(false);
+					removeItemFromXChooseBoxes(4);
 				}
 			}
 		});
@@ -521,6 +564,12 @@ public class Workbench {
 			public void itemStateChanged(ItemEvent arg0) {
 				rangeX5FromText.setEnabled(checkBoxX5.isSelected());
 				rangeX5ToText.setEnabled(checkBoxX5.isSelected());
+				if(checkBoxX4.isSelected()) {
+					addItemToXChooseBoxes(5);
+				}
+				else {
+					removeItemFromXChooseBoxes(5);
+				}
 			}
 		});
 		
@@ -529,6 +578,21 @@ public class Workbench {
 				stepsLengthTextField.setEnabled(checkBoxShowChart.isSelected());
 			}
 		});
+	}
+	
+	private void enableXChooseBoxes(boolean enable) {
+		X1ChooseBox.setEnabled(enable);
+		X2ChooseBox.setEnabled(enable);
+	}
+	
+	private void removeItemFromXChooseBoxes(int xVariable) {
+		X1ChooseBox.removeItemAt(xVariable - 1);
+		X2ChooseBox.removeItemAt(xVariable - 1);
+	}
+	
+	private void addItemToXChooseBoxes(int xVariable) {
+		X1ChooseBox.addItem("X" + xVariable);
+		X2ChooseBox.addItem("X" + xVariable);
 	}
 
 	private void initWidgetsValues() {
@@ -598,9 +662,37 @@ public class Workbench {
 			variables.setValue("x2", 0.0);
 			variables.setValue("pi", Math.PI);
 			variables.setValue("e", Math.E);
-		FuncMap functions = new FunctionMapBase();
+		
+//		if(checkBoxX3.isSelected()) {
+//			ArrayList<String> zeroVariables = new ArrayList<String>();
+//			for(int i = 0; i < X1ChooseBox.getItemCount(); i++) {
+//				String x = "X"+(i+1);
+//				if(X1ChooseBox.getItemAt(i) != x && X2ChooseBox.getItemAt(i) != x) {
+//					
+//				}
+//			}
+//		}
 		
 		//Przygotowanie wykresu funkcji
+		Shape surface = prepareSurface(equation, variables, rangeXFrom, rangeXTo, rangeYFrom, rangeYTo, stepLength);
+		
+		//Przygotowanie najlepszego punktu
+		Point point = null;
+		if(geneticAlgorithm != null) {
+			point = preparePoint();
+		}
+
+		//Rysowanie wykresu
+		Chart chart = new Chart(Quality.Advanced);
+		chart.getScene().getGraph().add(surface);
+		if(point != null)
+			chart.getScene().getGraph().add(point);
+		ChartLauncher.openChart(chart);
+	}
+	
+	private Shape prepareSurface(Expression equation, VarMap variables, double rangeXFrom, double rangeXTo,
+								 double rangeYFrom, double rangeYTo, double stepLength) {
+		FuncMap functions = new FuncMap(false);
 		Mapper mapper = ChartParametersFactory.getMapper(equation, variables, functions);
 
 		org.jzy3d.maths.Range rangeX = ChartParametersFactory.getRange(rangeXFrom, rangeXTo);
@@ -615,23 +707,17 @@ public class Workbench {
 		surface.setWireframeDisplayed(false);
 		surface.setWireframeColor(org.jzy3d.colors.Color.BLACK);
 		
-		//Przygotowanie najlepszego punktu
-		Point point = null;
-		if(geneticAlgorithm != null) {
-			Specimen bestMatch = geneticAlgorithm.getBestMatch();
-			point = new Point(new Coord3d(bestMatch.getChromosome().get(0),
-							  			  bestMatch.getChromosome().get(1),
-							  			  bestMatch.getScore()),
-							  org.jzy3d.colors.Color.RED,
-							  7.5f);
-		}
-
-		//Rysowanie wykresu
-		Chart chart = new Chart(Quality.Advanced);
-		chart.getScene().getGraph().add(surface);
-		if(point != null)
-			chart.getScene().getGraph().add(point);
-		ChartLauncher.openChart(chart);
+		return surface;
+	}
+	
+	private Point preparePoint() {
+		Specimen bestMatch = geneticAlgorithm.getBestMatch();
+		Point point = new Point(new Coord3d(bestMatch.getChromosome().get(0),
+						  			        bestMatch.getChromosome().get(1),
+						  			        bestMatch.getScore()),
+						  org.jzy3d.colors.Color.RED,
+						  7.5f);
+		return point;
 	}
 	
 	private Double getDoubleTextValue(JTextField text){
