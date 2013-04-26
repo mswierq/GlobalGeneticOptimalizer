@@ -596,8 +596,8 @@ public class Workbench {
 	}
 
 	private void initWidgetsValues() {
-//		equationTextField.setText("(4-2.1*x1^2+x1^(4/3))*x1^2+x1*x2+(-4+4*x2^2)*x2^2");  //Funkcja przy ktorej pojawia sie NaN
-		equationTextField.setText("(1+(x1+x2+1)^2*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2))*(30+(2*x1-3*x2)^2*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2))");
+		equationTextField.setText("(4-2.1*x1^2+x1^(4/3))*x1^2+x1*x2+(-4+4*x2^2)*x2^2");  //Funkcja przy ktorej pojawia sie NaN
+//		equationTextField.setText("(1+(x1+x2+1)^2*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2))*(30+(2*x1-3*x2)^2*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2))");
 //		equationTextField.setText("x1^2+x2^2");
 		rangeX1FromText.setText("-7");
 		rangeX1ToText.setText("2.5");
@@ -656,6 +656,18 @@ public class Workbench {
 		double rangeYFrom = Double.parseDouble(rangeX2FromText.getText());
 		double rangeYTo = Double.parseDouble(rangeX2ToText.getText());
 		double stepLength = Double.parseDouble(stepsLengthTextField.getText());
+		
+		if(rangeXFrom > rangeXTo) {
+			double tmp = rangeXFrom;
+			rangeXFrom = rangeXTo;
+			rangeXTo = tmp;
+		}
+		
+		if(rangeYFrom > rangeYTo) {
+			double tmp = rangeYFrom;
+			rangeYFrom = rangeYTo;
+			rangeYTo = tmp;
+		}
 		
 		VarMap variables = new VarMap(false);
 			variables.setValue("x1", 0.0);
