@@ -9,8 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,10 +45,7 @@ import pwr.algorithm.GeneticAlgorithm;
 import pwr.algorithm.HessianCounter;
 import pwr.algorithm.Range;
 import pwr.algorithm.Specimen;
-import pwr.algorithm.details.impl.ResultsGenerator;
 import pwr.chartCreator.ChartParametersFactory;
-import pwr.chartCreator.ChartPrinter;
-import pwr.parser.FunctionMapBase;
 
 import com.graphbuilder.math.Expression;
 import com.graphbuilder.math.ExpressionTree;
@@ -98,7 +93,6 @@ public class Workbench {
 	private JComboBox<String> X2ChooseBox;
 	private JCheckBox chckbxCrossSection;
 	
-	private ResultsGenerator results;
 	private static GeneticAlgorithm geneticAlgorithm = null;
 
 	public static void main(String[] args) {
@@ -120,7 +114,6 @@ public class Workbench {
 		
 		this.selectedCrossAlgorithm = ECross.arithmetic;
 		this.selectedMutationAlgorithm = EMutation.equal;
-		this.results = new ResultsGenerator();
 	}
 
 	private void initialize() {
@@ -403,19 +396,10 @@ public class Workbench {
 			public void actionPerformed(ActionEvent arg0) {
 				Expression equation = ExpressionTree.parse(equationTextField.getText());
 				
-				results.clearMatchTrace();
-				results.setMatchTraceSaveFile("matchTrace.m");
-				
 				runGeneticAlgorithm(equation);
 				
 				if(checkBoxShowChart.isSelected()){
 					printChart(equation);
-				}
-				
-				try {
-					results.saveMatchTraceToFile();
-				} catch (IOException e) {
-					e.printStackTrace();
 				}
 			}
 		});
@@ -596,9 +580,9 @@ public class Workbench {
 	}
 
 	private void initWidgetsValues() {
-		equationTextField.setText("(4-2.1*x1^2+x1^(4/3))*x1^2+x1*x2+(-4+4*x2^2)*x2^2");  //Funkcja przy ktorej pojawia sie NaN
+//		equationTextField.setText("(4-2.1*x1^2+x1^(4/3))*x1^2+x1*x2+(-4+4*x2^2)*x2^2");  //Funkcja przy ktorej pojawia sie NaN
 //		equationTextField.setText("(1+(x1+x2+1)^2*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2))*(30+(2*x1-3*x2)^2*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2))");
-//		equationTextField.setText("x1^2+x2^2");
+		equationTextField.setText("x1^2+x2^2");
 		rangeX1FromText.setText("-7");
 		rangeX1ToText.setText("2.5");
 		rangeX2FromText.setText("-2");
@@ -626,8 +610,6 @@ public class Workbench {
 			lblResultScore.setText("Obliczanie");
 			
 			geneticAlgorithm.execute();
-			
-			results.addMatchToTrace(geneticAlgorithm.getBestMatch());
 			
 			printResults(geneticAlgorithm.getBestMatch());
 			System.out.println(geneticAlgorithm);	

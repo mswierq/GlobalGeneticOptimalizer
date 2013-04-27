@@ -1,5 +1,6 @@
 package pwr.algorithm;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +14,7 @@ import pwr.algorithm.details.facade.IMutationOperator;
 import pwr.algorithm.details.facade.ISelection;
 import pwr.algorithm.details.impl.AlgorithmPicker;
 import pwr.algorithm.details.impl.RankingSelection;
+import pwr.algorithm.details.impl.ResultsGenerator;
 import pwr.parser.FunctionMapBase;
 
 import com.graphbuilder.math.Expression;
@@ -34,6 +36,7 @@ public class GeneticAlgorithm {
 	private Specimen bestMatch;
 	private final Double maximumError;
 	private Integer doneIterations;
+	private ResultsGenerator results;
 	
 	public GeneticAlgorithm(Map<EParameters, Range> limits, Integer iterationsL, Double propabilityCross, Double propabilityMutation, ECross crossAlgorithm, EMutation mutationAlgorithm, Expression expression) {
 		super();
@@ -57,6 +60,13 @@ public class GeneticAlgorithm {
 		eval(population); //tymczasowo
 		Collections.min(population);
 		bestMatch = population.get(0); //tymczasowo
+		
+		results = new ResultsGenerator();
+		
+		String fileSep = System.getProperty("file.separator");
+		
+		results.clearMatchTrace();
+		results.setMatchTraceSaveDirectory("matlab" + fileSep + "trace");
 	}
 	
 	private List<Double> generateChromosome(SortedSet<EParameters> sortedVarSet){
@@ -131,9 +141,16 @@ public class GeneticAlgorithm {
 			mutationOperator.mutate(intermediatePopulation,propabilityMutation,i);
 			replacePopulations();
 			eval(population);
+			results.addMatchToTrace(bestMatch);
 			if(checkStopCriteria()) {
 				break;
 			}
+		}
+		
+		try {
+			results.saveMatchTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
