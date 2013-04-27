@@ -44,7 +44,7 @@ public class RankingSelection implements ISelection {
 			Double randomRank = this.randomNumbersGenerator.nextDouble();
 			for(Specimen s: specimens) {
 				if(s.getRank() < randomRank && newGeneration.size() < specimens.size()) {
-					newGeneration.add(s);
+					newGeneration.add(s.getCopy());
 				} else if(newGeneration.size() < specimens.size()) {
 					break;
 				}

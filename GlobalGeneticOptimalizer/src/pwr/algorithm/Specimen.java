@@ -1,10 +1,9 @@
 package pwr.algorithm;
 
 import java.util.List;
-
 import com.graphbuilder.math.VarMap;
 
-public class Specimen implements Comparable<Specimen>{
+public class Specimen implements Comparable<Specimen>, Cloneable{
 	private Double score;
 	private List<Double> chromosome;
 	private Double rank;
@@ -65,5 +64,14 @@ public class Specimen implements Comparable<Specimen>{
 	@Override
 	public int compareTo(Specimen o) {
 		return this.score.compareTo(o.getScore());
+	}
+	
+	public Specimen getCopy() {
+		try {
+			return (Specimen) this.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

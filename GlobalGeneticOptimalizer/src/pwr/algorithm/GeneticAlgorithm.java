@@ -141,7 +141,7 @@ public class GeneticAlgorithm {
 			mutationOperator.mutate(intermediatePopulation,propabilityMutation,i);
 			replacePopulations();
 			eval(population);
-			results.addMatchToTrace(bestMatch);
+			results.addMatchToTrace(bestMatch.getCopy());
 			if(checkStopCriteria()) {
 				break;
 			}
