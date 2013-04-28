@@ -91,7 +91,7 @@ public class Workbench {
 	private JLabel lblResultX5;
 	private JComboBox<String> X1ChooseBox;
 	private JComboBox<String> X2ChooseBox;
-	private JCheckBox chckbxCrossSection;
+	private JCheckBox stopCritrionCheckBox;
 	
 	private static GeneticAlgorithm geneticAlgorithm = null;
 
@@ -130,7 +130,7 @@ public class Workbench {
 		ScrollPane scrollPanel = new ScrollPane();
 		scrollPanel.add(panel);
 		frmGlobalgenericoptimalizer.getContentPane().add(scrollPanel);
-		panel.setLayout(new MigLayout("", "[81.00px,grow][77.00px,grow,fill][46.00px][77.00px,grow,center][35px,fill]", "[][][][23px][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]"));
+		panel.setLayout(new MigLayout("", "[81.00px,grow][77.00px,grow,fill][46.00px][77.00px,grow,center][35px,fill]", "[][][][23px][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]"));
 		
 		
 		//=======================	USTAWIENIA FUNKCJI	=================================//
@@ -346,24 +346,6 @@ public class Workbench {
 		});
 		panel.add(rdbtnGradient, "cell 3 19 2 1,alignx left");
 		
-		//=======================	USTAWIENIA WYKRESU	=================================//
-		JSeparator separator_3 = new JSeparator();
-		panel.add(separator_3, "cell 0 20 5 1,grow");
-		
-		lblChartSettings = new JLabel("USTAWIENIA WYKRESU");
-		panel.add(lblChartSettings, "cell 0 21 5 1,alignx center");
-		
-		checkBoxShowChart = new JCheckBox("Poka\u017C wykres");
-		checkBoxShowChart.setSelected(true);
-		panel.add(checkBoxShowChart, "cell 0 22,alignx center");
-		
-		JLabel lblStep = new JLabel("Krok:");
-		panel.add(lblStep, "cell 2 22,alignx trailing");
-		
-		stepsLengthTextField = new JTextField();
-		panel.add(stepsLengthTextField, "cell 3 22,growx");
-		stepsLengthTextField.setColumns(10);
-		
 		crossGroup.add(rdbtnSimple);
 		crossGroup.add(rdbtnArithmetic);
 		
@@ -371,25 +353,47 @@ public class Workbench {
 		mutationGroup.add(rdbtnUnequal);
 		mutationGroup.add(rdbtnGradient);
 		
-		chckbxCrossSection = new JCheckBox("Rysuj poziomice");
-		panel.add(chckbxCrossSection, "cell 0 23,alignx center");
+		JSeparator separator_10 = new JSeparator();
+		panel.add(separator_10, "cell 0 20 5 1,growx");
+		
+		stopCritrionCheckBox = new JCheckBox("Włącz kryterium stopu");
+		stopCritrionCheckBox.setSelected(true);
+		panel.add(stopCritrionCheckBox, "cell 0 21");
+		
+		//=======================	USTAWIENIA WYKRESU	=================================//
+		JSeparator separator_3 = new JSeparator();
+		panel.add(separator_3, "cell 0 23 5 1,grow");
+		
+		lblChartSettings = new JLabel("USTAWIENIA WYKRESU");
+		panel.add(lblChartSettings, "cell 0 24 5 1,alignx center");
+		
+		checkBoxShowChart = new JCheckBox("Poka\u017C wykres");
+		checkBoxShowChart.setSelected(true);
+		panel.add(checkBoxShowChart, "cell 0 25,alignx center");
+		
+		JLabel lblStep = new JLabel("Krok:");
+		panel.add(lblStep, "cell 2 25,alignx trailing");
+		
+		stepsLengthTextField = new JTextField();
+		panel.add(stepsLengthTextField, "cell 3 25,growx");
+		stepsLengthTextField.setColumns(10);
 		
 		JLabel lblNarysuj = new JLabel("Narysuj dla zmiennych: ");
-		panel.add(lblNarysuj, "flowx,cell 0 24,alignx center");
+		panel.add(lblNarysuj, "flowx,cell 0 26,alignx center");
 		
 		X1ChooseBox = new JComboBox<String>();
 		X1ChooseBox.setEnabled(false);
-		panel.add(X1ChooseBox, "flowx,cell 1 24");
+		panel.add(X1ChooseBox, "flowx,cell 1 26");
 		
 		X2ChooseBox = new JComboBox<String>();
 		X2ChooseBox.setEnabled(false);
-		panel.add(X2ChooseBox, "cell 1 24");
+		panel.add(X2ChooseBox, "cell 1 26");
 		
 		addItemToXChooseBoxes(1);
 		addItemToXChooseBoxes(2);
 		
 		JSeparator separator_5 = new JSeparator();
-		panel.add(separator_5, "cell 0 25 5 1,grow");
+		panel.add(separator_5, "cell 0 27 5 1,grow");
 		
 		JButton btnRunner = new JButton("Start");
 		btnRunner.addActionListener(new ActionListener() {
@@ -413,7 +417,7 @@ public class Workbench {
 		});
 		
 		btnRedrawChart.setSize(20, 40);
-		panel.add(btnRedrawChart, "flowx,cell 0 26,alignx center");
+		panel.add(btnRedrawChart, "flowx,cell 0 28,alignx center");
 		
 		JButton btnHesjan = new JButton("Hesjan");
 		btnHesjan.addActionListener(new ActionListener() {
@@ -423,56 +427,56 @@ public class Workbench {
 				HessianCounter.countHessian(limits, equation);
 			}
 		});
-		panel.add(btnHesjan, "cell 3 26,alignx center");
+		panel.add(btnHesjan, "cell 3 28,alignx center");
 		
 		btnRunner.setSize(20, 20);
-		panel.add(btnRunner, "cell 4 26,growx,aligny top");
+		panel.add(btnRunner, "cell 4 28,alignx center,aligny top");
 		
 		JSeparator separator_8 = new JSeparator();
-		panel.add(separator_8, "cell 0 30 5 1,grow");
+		panel.add(separator_8, "cell 0 32 5 1,grow");
 		
 		JLabel lblBestMatch = new JLabel("NAJLEPSZE DOPASOWANIE:");
-		panel.add(lblBestMatch, "cell 0 31 5 1,alignx center");
+		panel.add(lblBestMatch, "cell 0 33 5 1,alignx center");
 		
 		JSeparator separator_9 = new JSeparator();
-		panel.add(separator_9, "cell 0 32 5 1,grow");
+		panel.add(separator_9, "cell 0 34 5 1,grow");
 		
 		JLabel lblBestX1 = new JLabel("X1: ");
-		panel.add(lblBestX1, "cell 0 34,alignx right");
+		panel.add(lblBestX1, "cell 0 36,alignx right");
 		
 		lblResultX1 = new JLabel("");
-		panel.add(lblResultX1, "cell 1 34,alignx left");
+		panel.add(lblResultX1, "cell 1 36,alignx left");
 		
 		JLabel lblNewLabel = new JLabel("f([x]): ");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		panel.add(lblNewLabel, "cell 2 34,alignx right");
+		panel.add(lblNewLabel, "cell 2 36,alignx right");
 		
 		lblResultScore = new JLabel("");
-		panel.add(lblResultScore, "cell 3 34,alignx left");
+		panel.add(lblResultScore, "cell 3 36,alignx left");
 		
 		JLabel lblBestX2 = new JLabel("X2: ");
-		panel.add(lblBestX2, "cell 0 35,alignx right");
+		panel.add(lblBestX2, "cell 0 37,alignx right");
 		
 		lblResultX2 = new JLabel("");
-		panel.add(lblResultX2, "cell 1 35,alignx left");
+		panel.add(lblResultX2, "cell 1 37,alignx left");
 		
 		JLabel lblBestX3 = new JLabel("X3: ");
-		panel.add(lblBestX3, "cell 0 36,alignx right");
+		panel.add(lblBestX3, "cell 0 38,alignx right");
 		
 		lblResultX3 = new JLabel("");
-		panel.add(lblResultX3, "cell 1 36,alignx left");
+		panel.add(lblResultX3, "cell 1 38,alignx left");
 		
 		JLabel lblBestX4 = new JLabel("X4: ");
-		panel.add(lblBestX4, "cell 0 37,alignx right");
+		panel.add(lblBestX4, "cell 0 39,alignx right");
 		
 		lblResultX4 = new JLabel("");
-		panel.add(lblResultX4, "cell 1 37,alignx left");
+		panel.add(lblResultX4, "cell 1 39,alignx left");
 		
 		JLabel lblBestX5 = new JLabel("X5: ");
-		panel.add(lblBestX5, "cell 0 38,alignx right");
+		panel.add(lblBestX5, "cell 0 40,alignx right");
 		
 		lblResultX5 = new JLabel("");
-		panel.add(lblResultX5, "cell 1 38,alignx left");
+		panel.add(lblResultX5, "cell 1 40,alignx left");
 		
 		addWidgetsListeners();
 		initWidgetsValues();
@@ -499,11 +503,8 @@ public class Workbench {
 				rangeX2ToText.setEnabled(checkBoxX2.isSelected());
 				if(checkBoxX2.isSelected()) {
 					checkBoxX3.setEnabled(true);
-					chckbxCrossSection.setEnabled(true);
 				}
 				else {
-					chckbxCrossSection.setEnabled(false);
-					chckbxCrossSection.setSelected(false);
 					checkBoxX3.setEnabled(false);
 					checkBoxX3.setSelected(false);
 				}
@@ -608,6 +609,12 @@ public class Workbench {
 			System.out.println();
 			
 			lblResultScore.setText("Obliczanie");
+			
+			if(stopCritrionCheckBox.isSelected()) {
+				geneticAlgorithm.enableStopCriterion(true);
+			} else {
+				geneticAlgorithm.enableStopCriterion(false);
+			}
 			
 			geneticAlgorithm.execute();
 			

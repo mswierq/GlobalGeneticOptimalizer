@@ -37,6 +37,7 @@ public class GeneticAlgorithm {
 	private final Double maximumError;
 	private Integer doneIterations;
 	private ResultsGenerator results;
+	private boolean enableStopCriterion;
 	
 	public GeneticAlgorithm(Map<EParameters, Range> limits, Integer iterationsL, Double propabilityCross, Double propabilityMutation, ECross crossAlgorithm, EMutation mutationAlgorithm, Expression expression) {
 		super();
@@ -56,17 +57,16 @@ public class GeneticAlgorithm {
 		this.intermediatePopulation = new ArrayList<Specimen>();
 		this.maximumError = 0.001;
 		this.doneIterations = 0;
+		this.enableStopCriterion = true;
 		generateRandomPopulation();
 		eval(population); //tymczasowo
 		Collections.min(population);
 		bestMatch = population.get(0); //tymczasowo
 		
-		results = new ResultsGenerator();
-		
+		this.results = new ResultsGenerator();
 		String fileSep = System.getProperty("file.separator");
-		
-		results.clearMatchTrace();
-		results.setMatchTraceSaveDirectory("matlab" + fileSep + "trace");
+		this.results.clearMatchTrace();
+		this.results.setMatchTraceSaveDirectory("matlab" + fileSep + "trace");
 	}
 	
 	private List<Double> generateChromosome(SortedSet<EParameters> sortedVarSet){
@@ -142,7 +142,7 @@ public class GeneticAlgorithm {
 			replacePopulations();
 			eval(population);
 			results.addMatchToTrace(bestMatch.getCopy());
-			if(checkStopCriteria()) {
+			if(enableStopCriterion && checkStopCriteria()) {
 				break;
 			}
 		}
@@ -156,6 +156,10 @@ public class GeneticAlgorithm {
 
 	public Specimen getBestMatch() {
 		return bestMatch;
+	}
+	
+	public void enableStopCriterion(boolean enable) {
+		this.enableStopCriterion = enable;
 	}
 
 	@Override
@@ -171,6 +175,7 @@ public class GeneticAlgorithm {
 		
 		rs += "\ncurrent best match = " + bestMatch.getScore() + "; " + bestMatch + "\n";
 		rs += "\nDone iterations = " + doneIterations + "\n";
+		rs += "Stop criteria ON: " + this.enableStopCriterion + "\n";
 		
 		return rs;
 	}
