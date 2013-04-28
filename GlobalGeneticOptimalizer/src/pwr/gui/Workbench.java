@@ -16,6 +16,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
@@ -49,9 +50,7 @@ import pwr.chartCreator.ChartParametersFactory;
 
 import com.graphbuilder.math.Expression;
 import com.graphbuilder.math.ExpressionTree;
-import com.graphbuilder.math.FuncMap;
 import com.graphbuilder.math.VarMap;
-import javax.swing.JComboBox;
 
 public class Workbench {
 
@@ -581,13 +580,20 @@ public class Workbench {
 	}
 
 	private void initWidgetsValues() {
-//		equationTextField.setText("(4-2.1*x1^2+x1^(4/3))*x1^2+x1*x2+(-4+4*x2^2)*x2^2");  //Funkcja przy ktorej pojawia sie NaN
-		equationTextField.setText("(1+(x1+x2+1)^2*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2))*(30+(2*x1-3*x2)^2*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2))");
-//		equationTextField.setText("x1^2+x2^2");
-		rangeX1FromText.setText("-7");
-		rangeX1ToText.setText("2.5");
-		rangeX2FromText.setText("-2");
-		rangeX2ToText.setText("10.1");
+//		equationTextField.setText("(4-2.1*x1^2+x1^(4/3))*x1^2+x1*x2+(-4+4*x2^2)*x2^2");  //Six-hump camel back function
+																						 //Funkcja przy ktorej pojawia sie NaN
+																						 //global minimum: f(x1,x2)=-1.0316; (x1,x2)=(-0.0898,0.7126), (0.0898,-0.7126).
+//		equationTextField.setText("(1+(x1+x2+1)^2*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2))*(30+(2*x1-3*x2)^2*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2))"); //Goldstein-Price
+		equationTextField.setText("1*(x2-(5.1/(4*pi^2))*x1^2+(5/pi)*x1-6)^2+10*(1-(1/(8*pi)))*cos(x1)+10"); //Branins function
+																						//global minimum: f(x1,x2)=0.397887; (x1,x2)=(-pi,12.275), (pi,2.275), (9.42478,2.475)
+//WIELE ZMIENNYCH
+//		equationTextField.setText("10*5+(x1^2-10*cos(2*pi*x1)+x2^2-10*cos(2*pi*x2)+x3^2-10*cos(2*pi*x3)+x4^2-10*cos(2*pi*x4)+x5^2-10*cos(2*pi*x5))"); //Rastrigin - minimum w zerze
+//		equationTextField.setText("-20*e^(-0.2*((1/5*(x1^2+x2^2+x3^2+x4^2+x5^2)))^(1/2))-e^(1/5*(cos(2*pi*x1)+cos(2*pi*x2)+cos(2*pi*x3)+cos(2*pi*x4)+cos(2*pi*x5)))+20+e^(1)"); //Ackley - minimum w zerze
+//		equationTextField.setText("-1*(sin(x1)*(sin(1*x1^2/pi))^(2*10)+sin(x2)*(sin(2*x2^2/pi))^(2*10)+sin(x3)*(sin(3*x3^2/pi))^(2*10)+sin(x4)*(sin(4*x4^2/pi))^(2*10)+sin(x5)*(sin(5*x5^2/pi))^(2*10))"); //Michalewicz gdy n min w -4.687		
+		rangeX1FromText.setText("-5");
+		rangeX1ToText.setText("10");
+		rangeX2FromText.setText("0");
+		rangeX2ToText.setText("15");
 		
 		iterationsText.setText("2500");
 		crossProbabilityText.setText("0.6");
@@ -661,6 +667,9 @@ public class Workbench {
 		VarMap variables = new VarMap(false);
 			variables.setValue("x1", 0.0);
 			variables.setValue("x2", 0.0);
+			variables.setValue("x3", 0.0);
+			variables.setValue("x4", 0.0);
+			variables.setValue("x5", 0.0);
 			variables.setValue("pi", Math.PI);
 			variables.setValue("e", Math.E);
 		
@@ -693,8 +702,7 @@ public class Workbench {
 	
 	private Shape prepareSurface(Expression equation, VarMap variables, double rangeXFrom, double rangeXTo,
 								 double rangeYFrom, double rangeYTo, double stepLength) {
-		FuncMap functions = new FuncMap(false);
-		Mapper mapper = ChartParametersFactory.getMapper(equation, variables, functions);
+		Mapper mapper = ChartParametersFactory.getMapper(equation, variables);
 
 		org.jzy3d.maths.Range rangeX = ChartParametersFactory.getRange(rangeXFrom, rangeXTo);
 		org.jzy3d.maths.Range rangeY = ChartParametersFactory.getRange(rangeYFrom, rangeYTo);
@@ -705,7 +713,7 @@ public class Workbench {
 		surface.setColorMapper(new ColorMapper(new ColorMapRainbow(), surface.getBounds().getZmin(), surface.getBounds().getZmax(),
 							   new org.jzy3d.colors.Color(1, 1, 1, .5f)));
 		surface.setFaceDisplayed(true);
-		surface.setWireframeDisplayed(false);
+		surface.setWireframeDisplayed(true);
 		surface.setWireframeColor(org.jzy3d.colors.Color.BLACK);
 		
 		return surface;
@@ -716,8 +724,8 @@ public class Workbench {
 		Point point = new Point(new Coord3d(bestMatch.getChromosome().get(0),
 						  			        bestMatch.getChromosome().get(1),
 						  			        bestMatch.getScore()),
-						  org.jzy3d.colors.Color.RED,
-						  7.5f);
+											org.jzy3d.colors.Color.RED,
+											7.5f);
 		return point;
 	}
 	

@@ -46,7 +46,7 @@ public class MutationGradientAllGenes implements IMutationOperator{
 		for(int i=0; i < ranges.size(); i++){
 			String diffFormula = calculusEngine.execute("DIFF(" + formula + "," + "x" + (i+1) + ")");
 			System.out.println("Diff formula for: " + EParameters.getEParameter(i) + ": " + diffFormula);
-			diffMap.put(EParameters.values()[i], ExpressionTree.parse(diffFormula));
+			diffMap.put(EParameters.values()[i], ExpressionTree.parse(diffFormula.replace("-(", "-1*(")));
 		}
 	}
 
