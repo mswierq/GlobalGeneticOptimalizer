@@ -28,16 +28,8 @@ import net.miginfocom.swing.MigLayout;
 
 import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.ChartLauncher;
-import org.jzy3d.colors.ColorMapper;
-import org.jzy3d.colors.colormaps.ColorMapRainbow;
 import org.jzy3d.global.Settings;
-import org.jzy3d.maths.Coord3d;
-import org.jzy3d.plot3d.builder.Builder;
-import org.jzy3d.plot3d.builder.Mapper;
-import org.jzy3d.plot3d.builder.concrete.OrthonormalGrid;
 import org.jzy3d.plot3d.primitives.Point;
-import org.jzy3d.plot3d.primitives.Shape;
-import org.jzy3d.plot3d.rendering.canvas.Quality;
 
 import pwr.algorithm.ECross;
 import pwr.algorithm.EMutation;
@@ -47,12 +39,9 @@ import pwr.algorithm.HessianCounter;
 import pwr.algorithm.Range;
 import pwr.algorithm.Specimen;
 import pwr.chartCreator.ChartMaker;
-import pwr.chartCreator.ChartParametersFactory;
-import pwr.parser.FunctionMapBase;
 
 import com.graphbuilder.math.Expression;
 import com.graphbuilder.math.ExpressionTree;
-import com.graphbuilder.math.FuncMap;
 import com.graphbuilder.math.VarMap;
 
 public class Workbench {
@@ -677,9 +666,9 @@ public class Workbench {
 		//Przygotowanie najlepszego punktu
 		Point point = null;
 		if(geneticAlgorithm != null) {
-			ChartMaker.addPointToChart(geneticAlgorithm.getBestMatch(), chart, EParameters.X1, EParameters.X2);
+			ChartMaker.addBestPointToChart(geneticAlgorithm.getBestMatch(), chart, EParameters.X1, EParameters.X2);
 			
-			for(int i=0; i<geneticAlgorithm.getResults().getMatchTrace().size(); i+=25){
+			for(int i=0; i<geneticAlgorithm.getResults().getMatchTrace().size(); i++){
 				ChartMaker.addPointToChart(geneticAlgorithm.getResults().getMatchTrace().get(i), chart, EParameters.X1, EParameters.X2);
 			}
 		}
