@@ -158,6 +158,10 @@ public class GeneticAlgorithm {
 		return bestMatch;
 	}
 	
+	public ResultsGenerator getResults() {
+		return results;
+	}
+
 	public void enableStopCriterion(boolean enable) {
 		this.enableStopCriterion = enable;
 	}

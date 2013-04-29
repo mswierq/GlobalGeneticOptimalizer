@@ -46,6 +46,7 @@ import pwr.algorithm.GeneticAlgorithm;
 import pwr.algorithm.HessianCounter;
 import pwr.algorithm.Range;
 import pwr.algorithm.Specimen;
+import pwr.chartCreator.ChartMaker;
 import pwr.chartCreator.ChartParametersFactory;
 import pwr.parser.FunctionMapBase;
 
@@ -666,55 +667,25 @@ public class Workbench {
 			variables.setValue("e", Math.E);
 		
 		//Przygotowanie wykresu funkcji
-		Shape surface = prepareSurface(equation, variables, 
-									   ranges.get(EParameters.X1).getMin(),
-									   ranges.get(EParameters.X1).getMax(),
-									   ranges.get(EParameters.X2).getMin(),
-									   ranges.get(EParameters.X2).getMax(),
-									   stepLength);
+		Chart chart = ChartMaker.prepareChart(equation, variables, 
+											   ranges.get(EParameters.X1).getMin(),
+											   ranges.get(EParameters.X1).getMax(),
+											   ranges.get(EParameters.X2).getMin(),
+											   ranges.get(EParameters.X2).getMax(),
+											   stepLength);
 		
 		//Przygotowanie najlepszego punktu
 		Point point = null;
 		if(geneticAlgorithm != null) {
-			point = preparePoint(equation);
+			ChartMaker.addPointToChart(geneticAlgorithm.getBestMatch(), chart, EParameters.X1, EParameters.X2);
+			
+			for(int i=0; i<geneticAlgorithm.getResults().getMatchTrace().size(); i+=25){
+				ChartMaker.addPointToChart(geneticAlgorithm.getResults().getMatchTrace().get(i), chart, EParameters.X1, EParameters.X2);
+			}
 		}
 
 		//Rysowanie wykresu
-		Chart chart = new Chart(Quality.Advanced);
-		chart.getScene().getGraph().add(surface);
-		if(point != null)
-			chart.getScene().getGraph().add(point);
 		ChartLauncher.openChart(chart,equation.toString());
-	}
-	
-	private Shape prepareSurface(Expression equation, VarMap variables, double rangeXFrom, double rangeXTo,
-								 double rangeYFrom, double rangeYTo, double stepLength) {
-		Mapper mapper = ChartParametersFactory.getMapper(equation, variables);
-
-		org.jzy3d.maths.Range rangeX = ChartParametersFactory.getRange(rangeXFrom, rangeXTo);
-		org.jzy3d.maths.Range rangeY = ChartParametersFactory.getRange(rangeYFrom, rangeYTo);
-		int stepsX = Math.round((float)(rangeX.getMax() - rangeX.getMin())/(float)stepLength);
-		int stepsY = Math.round((float)(rangeY.getMax() - rangeY.getMin())/(float)stepLength);
-
-		Shape surface = Builder.buildOrthonormal(new OrthonormalGrid(rangeX, stepsX, rangeY, stepsY), mapper);
-		surface.setColorMapper(new ColorMapper(new ColorMapRainbow(), surface.getBounds().getZmin(), surface.getBounds().getZmax(),
-							   new org.jzy3d.colors.Color(1, 1, 1, .5f)));
-		surface.setFaceDisplayed(true);
-		surface.setWireframeDisplayed(true);
-		surface.setWireframeColor(org.jzy3d.colors.Color.BLACK);
-		
-		return surface;
-	}
-	
-	private Point preparePoint(Expression equation) {
-		Specimen bestMatch = geneticAlgorithm.getBestMatch();
-		HashMap<EParameters, Integer> chromosomeMap = getChromosomeMap();
-		Point point = new Point(new Coord3d(bestMatch.getChromosome().get(chromosomeMap.get(EParameters.X1)),
-						  			        bestMatch.getChromosome().get(chromosomeMap.get(EParameters.X2)),
-						  			        equation.eval(bestMatch.getVarMap(), new FunctionMapBase())),
-						  org.jzy3d.colors.Color.RED,
-						  7.5f);
-		return point;
 	}
 	
 	private Double getDoubleTextValue(JTextField text){

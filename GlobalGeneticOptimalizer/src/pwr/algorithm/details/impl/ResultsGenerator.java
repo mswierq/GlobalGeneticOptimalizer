@@ -133,4 +133,8 @@ public class ResultsGenerator {
 		streamWriter.write(matlabScript);
 		streamWriter.close();
 	}
+
+	public ArrayList<Specimen> getMatchTrace() {
+		return matchTrace;
+	}
 }
