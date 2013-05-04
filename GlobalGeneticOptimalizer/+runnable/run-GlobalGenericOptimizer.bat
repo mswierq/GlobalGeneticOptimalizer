@@ -1,2 +1,1 @@
-java -classpath "GlobalGenericOptimalizer_lib\*;GlobalGenericOptimalizer.jar" pwr.parser.MathTest
-cmd
+javaw -classpath "GlobalGenericOptimalizer_lib\*;GlobalGenericOptimalizer.jar" pwr.gui.Workbench

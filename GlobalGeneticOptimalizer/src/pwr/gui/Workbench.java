@@ -134,7 +134,7 @@ public class Workbench {
 		JSeparator separator_6 = new JSeparator();
 		panel.add(separator_6, "cell 0 2 5 1,grow");
 		
-		JLabel formulaLabel = new JLabel("Wprowadï¿½ formuï¿½ï¿½: ");
+		JLabel formulaLabel = new JLabel("WprowadŸ formu³ê: ");
 		formulaLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(formulaLabel, "cell 0 3,alignx left,aligny center");
 		
@@ -347,7 +347,7 @@ public class Workbench {
 		JSeparator separator_10 = new JSeparator();
 		panel.add(separator_10, "cell 0 20 5 1,growx");
 		
-		stopCritrionCheckBox = new JCheckBox("WÅ‚Ä…cz kryterium stopu");
+		stopCritrionCheckBox = new JCheckBox("W³¹cz kryterium stopu");
 		stopCritrionCheckBox.setSelected(true);
 		panel.add(stopCritrionCheckBox, "cell 0 21");
 		
