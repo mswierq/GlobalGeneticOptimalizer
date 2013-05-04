@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.TextEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,8 +82,6 @@ public class Workbench {
 	private JLabel lblResultX3;
 	private JLabel lblResultX4;
 	private JLabel lblResultX5;
-	private JComboBox<String> X1ChooseBox;
-	private JComboBox<String> X2ChooseBox;
 	private JCheckBox stopCritrionCheckBox;
 	
 	private static GeneticAlgorithm geneticAlgorithm = null;
@@ -369,20 +369,6 @@ public class Workbench {
 		panel.add(stepsLengthTextField, "cell 3 25,growx");
 		stepsLengthTextField.setColumns(10);
 		
-		JLabel lblNarysuj = new JLabel("Narysuj dla zmiennych: ");
-		panel.add(lblNarysuj, "flowx,cell 0 26,alignx center");
-		
-		X1ChooseBox = new JComboBox<String>();
-		X1ChooseBox.setEnabled(false);
-		panel.add(X1ChooseBox, "flowx,cell 1 26");
-		
-		X2ChooseBox = new JComboBox<String>();
-		X2ChooseBox.setEnabled(false);
-		panel.add(X2ChooseBox, "cell 1 26");
-		
-		addItemToXChooseBoxes(1);
-		addItemToXChooseBoxes(2);
-		
 		JSeparator separator_5 = new JSeparator();
 		panel.add(separator_5, "cell 0 27 5 1,grow");
 		
@@ -508,14 +494,10 @@ public class Workbench {
 				rangeX3ToText.setEnabled(checkBoxX3.isSelected());
 				if(checkBoxX3.isSelected()) {
 					checkBoxX4.setEnabled(true);
-					enableXChooseBoxes(true);
-					addItemToXChooseBoxes(3);
 				}
 				else {
 					checkBoxX4.setEnabled(false);
 					checkBoxX4.setSelected(false);
-					enableXChooseBoxes(false);
-					removeItemFromXChooseBoxes(3);
 				}
 			}
 		});
@@ -526,12 +508,10 @@ public class Workbench {
 				rangeX4ToText.setEnabled(checkBoxX4.isSelected());
 				if(checkBoxX4.isSelected()) {
 					checkBoxX5.setEnabled(true);
-					addItemToXChooseBoxes(4);
 				}
 				else {
 					checkBoxX5.setEnabled(false);
 					checkBoxX5.setSelected(false);
-					removeItemFromXChooseBoxes(4);
 				}
 			}
 		});
@@ -540,12 +520,6 @@ public class Workbench {
 			public void itemStateChanged(ItemEvent arg0) {
 				rangeX5FromText.setEnabled(checkBoxX5.isSelected());
 				rangeX5ToText.setEnabled(checkBoxX5.isSelected());
-				if(checkBoxX5.isSelected()) {
-					addItemToXChooseBoxes(5);
-				}
-				else {
-					removeItemFromXChooseBoxes(5);
-				}
 			}
 		});
 		
@@ -556,21 +530,6 @@ public class Workbench {
 		});
 	}
 	
-	private void enableXChooseBoxes(boolean enable) {
-		X1ChooseBox.setEnabled(enable);
-		X2ChooseBox.setEnabled(enable);
-	}
-	
-	private void removeItemFromXChooseBoxes(int xVariable) {
-		X1ChooseBox.removeItemAt(xVariable - 1);
-		X2ChooseBox.removeItemAt(xVariable - 1);
-	}
-	
-	private void addItemToXChooseBoxes(int xVariable) {
-		X1ChooseBox.addItem("X" + xVariable);
-		X2ChooseBox.addItem("X" + xVariable);
-	}
-
 	private void initWidgetsValues() {
 //		equationTextField.setText("(4-2.1*x1^2+x1^(4/3))*x1^2+x1*x2+(-4+4*x2^2)*x2^2");  //Six-hump camel back function
 																						 //Funkcja przy ktorej pojawia sie NaN
@@ -640,41 +599,113 @@ public class Workbench {
 	private void printChart(Expression equation) {
 		double stepLength = Double.parseDouble(stepsLengthTextField.getText());
 		
-		if(checkBoxX3.isSelected()) {
-			equation = truncateExpression(equation);
-		}
-		
-		HashMap<EParameters, Range> ranges = getRanges();
+		HashMap<EParameters,Range> ranges = getRanges();
 		
 		VarMap variables = new VarMap(false);
-			variables.setValue("x1", 0.0);
-			variables.setValue("x2", 0.0);
-			variables.setValue("x3", 0.0);
-			variables.setValue("x4", 0.0);
-			variables.setValue("x5", 0.0);
-			variables.setValue("pi", Math.PI);
-			variables.setValue("e", Math.E);
+		
+		ArrayList<EParameters> vars = prepareVarMap(variables);
+		
+		EParameters varX = vars.get(0);
+		EParameters varY = vars.get(1);
 		
 		//Przygotowanie wykresu funkcji
 		Chart chart = ChartMaker.prepareChart(equation, variables, 
-											   ranges.get(EParameters.X1).getMin(),
-											   ranges.get(EParameters.X1).getMax(),
-											   ranges.get(EParameters.X2).getMin(),
-											   ranges.get(EParameters.X2).getMax(),
+											   ranges.get(varX).getMin(),
+											   ranges.get(varX).getMax(),
+											   ranges.get(varY).getMin(),
+											   ranges.get(varY).getMax(),
 											   stepLength);
 		
 		//Przygotowanie najlepszego punktu
 		Point point = null;
 		if(geneticAlgorithm != null) {
-			ChartMaker.addBestPointToChart(geneticAlgorithm.getBestMatch(), chart, EParameters.X1, EParameters.X2);
+			ChartMaker.addBestPointToChart(geneticAlgorithm.getBestMatch(), chart, varX, varY);
 			
 			for(int i=0; i<geneticAlgorithm.getResults().getMatchTrace().size(); i++){
-				ChartMaker.addPointToChart(geneticAlgorithm.getResults().getMatchTrace().get(i), chart, EParameters.X1, EParameters.X2);
+				ChartMaker.addPointToChart(geneticAlgorithm.getResults().getMatchTrace().get(i), chart, varX, varY);
 			}
 		}
 
 		//Rysowanie wykresu
 		ChartLauncher.openChart(chart,equation.toString());
+	}
+	
+	private ArrayList<EParameters> prepareVarMap(VarMap variables) {
+		int counter = 0;
+		Double zero = new Double(0.0);
+		
+		EParameters varX = EParameters.X1;
+		EParameters varY = EParameters.X2;
+		
+		HashMap<EParameters, Range> ranges = getRanges();
+		
+		variables.setValue("x1", 0.0);
+		variables.setValue("x2", 0.0);
+		variables.setValue("x3", 0.0);
+		variables.setValue("x4", 0.0);
+		variables.setValue("x5", 0.0);
+		variables.setValue("pi", Math.PI);
+		variables.setValue("e", Math.E);
+		
+		if(checkBoxX1.isSelected()) {
+			variables.setValue("x1", getDoubleTextValue(rangeX1FromText));
+			if(!ranges.get(EParameters.X1).getRange().equals(zero)) {
+				varX = EParameters.X1;
+				counter++;
+			}
+		}
+		if(checkBoxX2.isSelected()) {
+			variables.setValue("x2", getDoubleTextValue(rangeX2FromText));
+			if(counter == 0 && !ranges.get(EParameters.X2).getRange().equals(zero)) {
+				varX = EParameters.X2;
+				counter++;
+			} else if(counter == 1 && !ranges.get(EParameters.X2).getRange().equals(zero)) {
+				varY = EParameters.X2;
+				counter++;
+			}
+		}
+		if(checkBoxX3.isSelected()) {
+			variables.setValue("x3", getDoubleTextValue(rangeX3FromText));
+			if(counter == 0 && !ranges.get(EParameters.X3).getRange().equals(zero)) {
+				varX = EParameters.X3;
+				counter++;
+			} else if(counter == 1 && !ranges.get(EParameters.X3).getRange().equals(zero)) {
+				varY = EParameters.X3;
+				counter++;
+			} else if(counter > 1) {
+				variables.setValue("x3", 0.0);
+			}
+		}
+		if(checkBoxX4.isSelected()) {
+			variables.setValue("x4", getDoubleTextValue(rangeX4FromText));
+			if(counter == 0 && !ranges.get(EParameters.X4).getRange().equals(zero)) {
+				varX = EParameters.X4;
+				counter++;
+			} else if(counter == 1 && !ranges.get(EParameters.X4).getRange().equals(zero)) {
+				varY = EParameters.X4;
+				counter++;
+			} else if(counter > 1) {
+				variables.setValue("x4", 0.0);
+			}
+		}
+		if(checkBoxX5.isSelected()) {
+			variables.setValue("x5", getDoubleTextValue(rangeX5FromText));
+			if(counter == 0 && !ranges.get(EParameters.X5).getRange().equals(zero)) {
+				varX = EParameters.X5;
+				counter++;
+			} else if(counter == 1 && !ranges.get(EParameters.X5).getRange().equals(zero)) {
+				varY = EParameters.X5;
+				counter++;
+			} else if(counter > 1) {
+				variables.setValue("x5", 0.0);
+			}
+		}
+		
+		ArrayList<EParameters> vars = new ArrayList<EParameters>(2);
+		vars.add(varX);
+		vars.add(varY);
+		
+		return vars;
 	}
 	
 	private Double getDoubleTextValue(JTextField text){
@@ -707,107 +738,30 @@ public class Workbench {
 		return limits;
 	}
 	
-	private Expression truncateExpression(Expression expression) {
-		String variables = "X1;X2;X3;X4;X5";
-		variables = variables.replaceAll((String) X1ChooseBox.getSelectedItem(), "");
-		variables = variables.replaceAll((String) X2ChooseBox.getSelectedItem(), "");
-		variables = variables.replaceAll(";;;", ";");
-		variables = variables.replaceAll(";;", ";");
-		if(variables.startsWith(";")) {
-			variables = variables.substring(1);
-		}
-		variables = variables.toLowerCase();
-		String [] varTab = variables.split(";");
-		String equation = expression.toString();
-			
-		for(int i = 0; i < varTab.length; i++) {
-			equation = equation.replaceAll(varTab[i], "1");
-		}
-		
-		System.out.println(equation);
-		
-		String newX1 = (String) X1ChooseBox.getSelectedItem();
-		String newX2 = (String) X2ChooseBox.getSelectedItem();
-		equation = equation.replaceAll(newX1.toLowerCase(), "x1");
-		equation = equation.replaceAll(newX2.toLowerCase(), "x2");
-		
-		expression = ExpressionTree.parse(equation);
-		
-		System.out.println("Print expression: " + expression);
-		
-		return expression;
-	}
-	
 	private HashMap<EParameters, Range> getRanges() {
 		HashMap<EParameters, Range> ranges = new HashMap<EParameters, Range>();
-		String x1 = (String) X1ChooseBox.getSelectedItem();
-		String x2 = (String) X2ChooseBox.getSelectedItem();
 		
-		//X1
-		if(x1.equals(EParameters.X1.name())) {
-			ranges.put(EParameters.X1, new Range(Double.parseDouble(rangeX1FromText.getText()),
-												 Double.parseDouble(rangeX1ToText.getText())));
+		if(checkBoxX1.isSelected()) {
+			ranges.put(EParameters.X1,new Range(getDoubleTextValue(rangeX1FromText),
+												getDoubleTextValue(rangeX1ToText)));
 		}
-		
-		if(x1.equals(EParameters.X2.name())) {
-			ranges.put(EParameters.X1, new Range(Double.parseDouble(rangeX2FromText.getText()),
-												 Double.parseDouble(rangeX2ToText.getText())));
+		if(checkBoxX2.isSelected()) {
+			ranges.put(EParameters.X2,new Range(getDoubleTextValue(rangeX2FromText),
+												getDoubleTextValue(rangeX2ToText)));
 		}
-		
-		if(x1.equals(EParameters.X3.name())) {
-			ranges.put(EParameters.X1, new Range(Double.parseDouble(rangeX3FromText.getText()),
-												 Double.parseDouble(rangeX3ToText.getText())));
+		if(checkBoxX3.isSelected()) {
+			ranges.put(EParameters.X3,new Range(getDoubleTextValue(rangeX3FromText),
+												getDoubleTextValue(rangeX3ToText)));
 		}
-		
-		if(x1.equals(EParameters.X4.name())) {
-			ranges.put(EParameters.X1, new Range(Double.parseDouble(rangeX4FromText.getText()),
-												 Double.parseDouble(rangeX4ToText.getText())));
+		if(checkBoxX4.isSelected()) {
+			ranges.put(EParameters.X4,new Range(getDoubleTextValue(rangeX4FromText),
+												getDoubleTextValue(rangeX4ToText)));
 		}
-		
-		if(x1.equals(EParameters.X5.name())) {
-			ranges.put(EParameters.X1, new Range(Double.parseDouble(rangeX5FromText.getText()),
-												 Double.parseDouble(rangeX5ToText.getText())));
-		}
-		
-		//X2
-		if(x2.equals(EParameters.X1.name())) {
-			ranges.put(EParameters.X2, new Range(Double.parseDouble(rangeX1FromText.getText()),
-												 Double.parseDouble(rangeX1ToText.getText())));
-		}
-		
-		if(x2.equals(EParameters.X2.name())) {
-			ranges.put(EParameters.X2, new Range(Double.parseDouble(rangeX2FromText.getText()),
-												 Double.parseDouble(rangeX2ToText.getText())));
-		}
-		
-		if(x2.equals(EParameters.X3.name())) {
-			ranges.put(EParameters.X2, new Range(Double.parseDouble(rangeX3FromText.getText()),
-												 Double.parseDouble(rangeX3ToText.getText())));
-		}
-		
-		if(x2.equals(EParameters.X4.name())) {
-			ranges.put(EParameters.X2, new Range(Double.parseDouble(rangeX4FromText.getText()),
-												 Double.parseDouble(rangeX4ToText.getText())));
-		}
-		
-		if(x2.equals(EParameters.X5.name())) {
-			ranges.put(EParameters.X2, new Range(Double.parseDouble(rangeX5FromText.getText()),
-												 Double.parseDouble(rangeX5ToText.getText())));
+		if(checkBoxX5.isSelected()) {
+			ranges.put(EParameters.X5,new Range(getDoubleTextValue(rangeX5FromText),
+												getDoubleTextValue(rangeX5ToText)));
 		}
 		
 		return ranges;
-	}
-	
-	private HashMap<EParameters, Integer> getChromosomeMap() {
-		HashMap<EParameters, Integer> map = new HashMap<EParameters, Integer>();
-		String x1Str = (String) X1ChooseBox.getSelectedItem();
-		String x2Str = (String) X2ChooseBox.getSelectedItem();
-		x1Str = x1Str.replace("X", "");
-		x2Str = x2Str.replace("X", "");
-		
-		map.put(EParameters.X1, Integer.parseInt(x1Str)-1);
-		map.put(EParameters.X2, Integer.parseInt(x2Str)-1);
-		
-		return map;
 	}
 }

@@ -64,49 +64,49 @@ public class ChartMaker {
 	public static Chart prepareChart(Expression equation, VarMap variables, double rangeXFrom, double rangeXTo,
 			double rangeYFrom, double rangeYTo, double stepLength) {
 		final Chart chart = new Chart(Quality.Advanced);
-		final MousePickingController<Object, Object> controller = new MousePickingController<>(chart);
-		controller.setPickingSupport(new PickingSupport());
-		chart.addController(controller);
+//		final MousePickingController<Object, Object> controller = new MousePickingController<>(chart);
+//		controller.setPickingSupport(new PickingSupport());
+//		chart.addController(controller);
 		
 		Shape surface = prepareSurface(equation, variables, rangeXFrom, rangeXTo, rangeYFrom, rangeYTo, stepLength);
 //		surface.setLegend(new ColorbarLegend(surface, chart.getView().getAxe().getLayout().getZTickProvider(),
 //													  chart.getView().getAxe().getLayout().getZTickRenderer()));
 		chart.getScene().getGraph().add(surface);
 		
-		chart.getCanvas().addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent arg0) {}
-			
-			@Override
-			public void mousePressed(MouseEvent arg0) {}
-			
-			@Override
-			public void mouseExited(MouseEvent arg0) {}
-			
-			@Override
-			public void mouseEntered(MouseEvent arg0) {}
-			
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if(chart.getCanvas().getView().getCamera().getRectangle().contains(arg0.getPoint())){
-					chart.getCanvas().getView().updateBounds();
-					Coord3d selectedPoint = chart.getCanvas().getView().projectMouse(arg0.getX(), arg0.getY());
-					
-					for(AbstractDrawable drawable : chart.getScene().getGraph().getAll()){
-						if(drawable instanceof Point)
-							if(drawable.getBounds().getCenter().getXY().distance(selectedPoint.getXY())<5)
-								System.out.println("#########XY: " + drawable.getBarycentre().getXY());
-							else
-								System.out.println("No point, clicked: " + selectedPoint.toString());
-					}
-					
-//					System.out.println("" + chart.getScene().getGraph().getAll().get(0).getBounds().getCenter().getXY().x);
-//					System.out.println("x max: " + chart.getCanvas().getView().getCamera().getRectangle().getMaxX());
-//					System.out.println("moved to: " + arg0.getX() + "\t" + arg0.getY());
-				}
-			}
-		});
+//		chart.getCanvas().addMouseListener(new MouseListener() {
+//			
+//			@Override
+//			public void mouseReleased(MouseEvent arg0) {}
+//			
+//			@Override
+//			public void mousePressed(MouseEvent arg0) {}
+//			
+//			@Override
+//			public void mouseExited(MouseEvent arg0) {}
+//			
+//			@Override
+//			public void mouseEntered(MouseEvent arg0) {}
+//			
+//			@Override
+//			public void mouseClicked(MouseEvent arg0) {
+//				if(chart.getCanvas().getView().getCamera().getRectangle().contains(arg0.getPoint())){
+//					chart.getCanvas().getView().updateBounds();
+//					Coord3d selectedPoint = chart.getCanvas().getView().projectMouse(arg0.getX(), arg0.getY());
+//					
+//					for(AbstractDrawable drawable : chart.getScene().getGraph().getAll()){
+//						if(drawable instanceof Point)
+//							if(drawable.getBounds().getCenter().getXY().distance(selectedPoint.getXY())<5)
+//								System.out.println("#########XY: " + drawable.getBarycentre().getXY());
+//							else
+//								System.out.println("No point, clicked: " + selectedPoint.toString());
+//					}
+//					
+////					System.out.println("" + chart.getScene().getGraph().getAll().get(0).getBounds().getCenter().getXY().x);
+////					System.out.println("x max: " + chart.getCanvas().getView().getCamera().getRectangle().getMaxX());
+////					System.out.println("moved to: " + arg0.getX() + "\t" + arg0.getY());
+//				}
+//			}
+//		});
 		
 		return chart;
 	}
