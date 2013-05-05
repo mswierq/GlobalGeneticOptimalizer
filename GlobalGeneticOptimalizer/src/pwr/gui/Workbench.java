@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.TextEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +17,6 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
@@ -38,6 +36,7 @@ import pwr.algorithm.EMutation;
 import pwr.algorithm.EParameters;
 import pwr.algorithm.GeneticAlgorithm;
 import pwr.algorithm.HessianCounter;
+import pwr.algorithm.HessianResult;
 import pwr.algorithm.Range;
 import pwr.algorithm.Specimen;
 import pwr.chartCreator.ChartMaker;
@@ -399,9 +398,17 @@ public class Workbench {
 		JButton btnHesjan = new JButton("Hesjan");
 		btnHesjan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Expression equation = ExpressionTree.parse(equationTextField.getText());
-				Map<EParameters,Range> limits = setFunctionLimits();
-				HessianCounter.countHessian(limits, equation);
+				if(geneticAlgorithm == null){
+					Expression equation = ExpressionTree.parse(equationTextField.getText());
+					Map<EParameters,Range> limits = setFunctionLimits();
+					HessianResult result = HessianCounter.countHessian(limits, equation);
+					new HessianDisplayer(result).main(result);	
+				} else {
+					Expression equation = ExpressionTree.parse(equationTextField.getText());
+					Map<EParameters,Range> limits = setFunctionLimits();
+					HessianResult result = HessianCounter.countHessian(limits, equation, geneticAlgorithm.getBestMatch());
+					new HessianDisplayer(result).main(result);	
+				}
 			}
 		});
 		panel.add(btnHesjan, "cell 3 28,alignx center");
@@ -534,17 +541,17 @@ public class Workbench {
 //		equationTextField.setText("(4-2.1*x1^2+x1^(4/3))*x1^2+x1*x2+(-4+4*x2^2)*x2^2");  //Six-hump camel back function
 																						 //Funkcja przy ktorej pojawia sie NaN
 																						 //global minimum: f(x1,x2)=-1.0316; (x1,x2)=(-0.0898,0.7126), (0.0898,-0.7126).
-//		equationTextField.setText("(1+(x1+x2+1)^2*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2))*(30+(2*x1-3*x2)^2*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2))"); //Goldstein-Price
-		equationTextField.setText("1*(x2-(5.1/(4*pi^2))*x1^2+(5/pi)*x1-6)^2+10*(1-(1/(8*pi)))*cos(x1)+10"); //Branins function
+		equationTextField.setText("(1+(x1+x2+1)^2*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2))*(30+(2*x1-3*x2)^2*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2))"); //Goldstein-Price
+//		equationTextField.setText("1*(x2-(5.1/(4*pi^2))*x1^2+(5/pi)*x1-6)^2+10*(1-(1/(8*pi)))*cos(x1)+10"); //Branins function
 																						//global minimum: f(x1,x2)=0.397887; (x1,x2)=(-pi,12.275), (pi,2.275), (9.42478,2.475)
 //WIELE ZMIENNYCH
 //		equationTextField.setText("10*5+(x1^2-10*cos(2*pi*x1)+x2^2-10*cos(2*pi*x2)+x3^2-10*cos(2*pi*x3)+x4^2-10*cos(2*pi*x4)+x5^2-10*cos(2*pi*x5))"); //Rastrigin - minimum w zerze
 //		equationTextField.setText("-20*e^(-0.2*((1/5*(x1^2+x2^2+x3^2+x4^2+x5^2)))^(1/2))-e^(1/5*(cos(2*pi*x1)+cos(2*pi*x2)+cos(2*pi*x3)+cos(2*pi*x4)+cos(2*pi*x5)))+20+e^(1)"); //Ackley - minimum w zerze
 //		equationTextField.setText("-1*(sin(x1)*(sin(1*x1^2/pi))^(2*10)+sin(x2)*(sin(2*x2^2/pi))^(2*10)+sin(x3)*(sin(3*x3^2/pi))^(2*10)+sin(x4)*(sin(4*x4^2/pi))^(2*10)+sin(x5)*(sin(5*x5^2/pi))^(2*10))"); //Michalewicz gdy n min w -4.687		
-		rangeX1FromText.setText("-5");
-		rangeX1ToText.setText("10");
-		rangeX2FromText.setText("0");
-		rangeX2ToText.setText("15");
+		rangeX1FromText.setText("-3");
+		rangeX1ToText.setText("3");
+		rangeX2FromText.setText("-3");
+		rangeX2ToText.setText("3");
 		
 		iterationsText.setText("2500");
 		crossProbabilityText.setText("0.6");

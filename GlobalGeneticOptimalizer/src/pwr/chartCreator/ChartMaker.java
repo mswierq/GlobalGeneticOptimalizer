@@ -31,7 +31,8 @@ public class ChartMaker {
 						  			        specimen.getScore()),
 						  					org.jzy3d.colors.Color.RED,
 						  					7.5f);
-		chart.getScene().getGraph().add(point);
+		if(chart.getScene().getGraph().getBounds().contains(point.getBounds()))
+			chart.getScene().getGraph().add(point);
 	}
 	
 	public static void addBestPointToChart(Specimen specimen, Chart chart, EParameters x1, EParameters x2) {
@@ -40,7 +41,8 @@ public class ChartMaker {
 						  			        specimen.getScore()),
 						  					org.jzy3d.colors.Color.GREEN,
 						  					15.0f);
-		chart.getScene().getGraph().add(point);
+		if(chart.getScene().getGraph().getBounds().contains(point.getBounds()))
+			chart.getScene().getGraph().add(point);
 	}
 	
 	public static Shape prepareSurface(Expression equation, VarMap variables, double rangeXFrom, double rangeXTo,

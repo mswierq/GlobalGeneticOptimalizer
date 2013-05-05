@@ -6,13 +6,10 @@ import java.awt.GridLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
 import pwr.algorithm.HessianResult;
-
-import com.graphbuilder.math.Expression;
-import javax.swing.border.TitledBorder;
 
 public class HessianDisplayer extends JFrame {
 	private static final long serialVersionUID = -3762036190420409238L;
@@ -48,10 +45,12 @@ public class HessianDisplayer extends JFrame {
 		panelEquations.setLayout(new GridLayout(result.getHessian().length, 1, 15, 15));
 		
 		int rowIndex = 0;
-		for(Expression[] expressionRow : result.getHessian()){
-			panelEquations.add(new JTextField("x" + (rowIndex+1) + ": " + result.getFirstDiffList().get(rowIndex) + " = 0"));
-			for(Expression e : expressionRow){
-				int columnIndex = 1;
+		for(String[] expressionRow : result.getHessian()){
+			JTextArea equationArea = new JTextArea("x" + (rowIndex+1) + ": " + result.getFirstDiffList().get(rowIndex) + " = 0");
+				equationArea.setLineWrap(true);
+				panelEquations.add(equationArea);
+			int columnIndex = 1;
+			for(String e : expressionRow){
 				JPanel panel = new JPanel();
 					panel.setBorder(new TitledBorder(null, "d/(dx" + (rowIndex+1) + "x" + columnIndex + ")", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 					panel.setLayout(new GridLayout(1, 1, 15, 15));
