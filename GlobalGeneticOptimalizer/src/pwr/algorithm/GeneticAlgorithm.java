@@ -64,9 +64,9 @@ public class GeneticAlgorithm {
 		bestMatch = population.get(0); //tymczasowo
 		
 		this.results = new ResultsGenerator();
-		String fileSep = System.getProperty("file.separator");
+//		String fileSep = System.getProperty("file.separator");
 		this.results.clearMatchTrace();
-		this.results.setMatchTraceSaveDirectory("matlab" + fileSep + "trace");
+//		this.results.setMatchTraceSaveDirectory("matlab" + fileSep + "trace");
 	}
 	
 	private List<Double> generateChromosome(SortedSet<EParameters> sortedVarSet){
