@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import pwr.algorithm.HessianResult;
+import javax.swing.JScrollPane;
 
 public class HessianDisplayer extends JFrame {
 	private static final long serialVersionUID = -3762036190420409238L;
@@ -36,12 +37,18 @@ public class HessianDisplayer extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new GridLayout(2, 1, 15, 15));
 		
+		JScrollPane scrollPaneHessian = new JScrollPane();
+		contentPane.add(scrollPaneHessian);
+		
 		JPanel panelHessian = new JPanel();
-		contentPane.add(panelHessian);
+		scrollPaneHessian.setViewportView(panelHessian);
 		panelHessian.setLayout(new GridLayout(result.getHessian().length, result.getHessian().length, 15, 15));
 		
+		JScrollPane scrollPaneEquations = new JScrollPane();
+		contentPane.add(scrollPaneEquations);
+		
 		JPanel panelEquations = new JPanel();
-		contentPane.add(panelEquations);
+		scrollPaneEquations.setViewportView(panelEquations);
 		panelEquations.setLayout(new GridLayout(result.getHessian().length, 1, 15, 15));
 		
 		int rowIndex = 0;
