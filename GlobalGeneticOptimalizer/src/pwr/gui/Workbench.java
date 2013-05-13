@@ -626,11 +626,11 @@ public class Workbench {
 		//Przygotowanie najlepszego punktu
 		Point point = null;
 		if(geneticAlgorithm != null) {
-			ChartMaker.addBestPointToChart(geneticAlgorithm.getBestMatch(), chart, varX, varY);
-			
 			for(int i=0; i<geneticAlgorithm.getResults().getMatchTrace().size(); i++){
 				ChartMaker.addPointToChart(geneticAlgorithm.getResults().getMatchTrace().get(i), chart, varX, varY);
 			}
+			
+			ChartMaker.addBestPointToChart(geneticAlgorithm.getBestMatch(), chart, varX, varY);
 		}
 
 		//Rysowanie wykresu

@@ -25,19 +25,20 @@ import com.graphbuilder.math.VarMap;
 
 public class ChartMaker {
 
-	public static void addPointToChart(Specimen specimen, Chart chart, EParameters x1, EParameters x2) {
-		Point point = new Point(new Coord3d(specimen.getChromosome().get(x1.ordinal()),
-						  			        specimen.getChromosome().get(x2.ordinal()),
+	public static void addPointToChart(Specimen specimen, Chart chart, EParameters x, EParameters y) {
+		Point point = new Point(new Coord3d(specimen.getChromosome().get(x.ordinal()),
+						  			        specimen.getChromosome().get(y.ordinal()),
 						  			        specimen.getScore()),
 						  					org.jzy3d.colors.Color.RED,
 						  					7.5f);
-		if(chart.getScene().getGraph().getBounds().contains(point.getBounds()))
+		
+		if( validatePoint(point, chart) )
 			chart.getScene().getGraph().add(point);
 	}
 	
-	public static void addBestPointToChart(Specimen specimen, Chart chart, EParameters x1, EParameters x2) {
-		Point point = new Point(new Coord3d(specimen.getChromosome().get(x1.ordinal()),
-						  			        specimen.getChromosome().get(x2.ordinal()),
+	public static void addBestPointToChart(Specimen specimen, Chart chart, EParameters x, EParameters y) {
+		Point point = new Point(new Coord3d(specimen.getChromosome().get(x.ordinal()),
+						  			        specimen.getChromosome().get(y.ordinal()),
 						  			        specimen.getScore()),
 						  					org.jzy3d.colors.Color.GREEN,
 						  					15.0f);
@@ -111,6 +112,18 @@ public class ChartMaker {
 //		});
 		
 		return chart;
+	}
+	
+	private static boolean validatePoint(Point point, Chart chart) {
+		float xMax = chart.getScene().getGraph().getBounds().getXmax();
+		float xMin = chart.getScene().getGraph().getBounds().getXmin();
+		float yMax = chart.getScene().getGraph().getBounds().getYmax();
+		float yMin = chart.getScene().getGraph().getBounds().getYmin();
+		
+		if(point.xyz.x >= xMin && point.xyz.x <= xMax && point.xyz.y >= yMin && point.xyz.y <= yMax)
+			return true;
+		
+		return false;
 	}
 
 }
